@@ -177,6 +177,7 @@ class PapakiDomainNameSearch{
 			
 			
 			$this->whois_response = $body;
+			$this->whois_response = str_replace("<br />", "\n", $this->whois_response);
 			
 			return $this->whois_response;
 		}
