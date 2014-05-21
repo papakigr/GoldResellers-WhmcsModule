@@ -59,7 +59,7 @@ if (count($search->arrayAvDomains) != 0)
 				
 					$search2->exec_request_for(_TYPE_WHOIS);
 ?>
-					<?=$search2->whois_response;?>	 <?
+					<?PHP echo $search2->whois_response;?>	 <?PHP
 	}
 	
 	 function myEndsWith($Haystack, $Needle){
