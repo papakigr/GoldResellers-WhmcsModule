@@ -455,10 +455,40 @@ $sql="select * from tbldomains,tblorders  where tbldomains.orderid=tblorders.id 
 	$apikey = encodetolatin($params["APIkey"]);
 	$posturl = encodetolatin($params["PostUrl"]);
 	$testmode = encodetolatin($params["TestMode"]);
-	$description_ar=encodetolatin($params["additionalfields"]);
+	$description_ar=$params["additionalfields"];
 	$description=encodetolatin($description_ar["Description"]);
 	 if (trim($description)=='')
 	  $description= ' ';
+	  
+	  
+	  //extra attributes
+		$LegalType=encodetolatin($description_ar["Legal Type"]);
+		$tax_id=encodetolatin($description_ar["Tax ID"]); 
+		$extra_country=encodetolatin($params["country"]); 
+		
+		if($LegalType=="Italian and foreign natural persons"){
+			$LegalType="1";	
+		}
+		if($LegalType=="Companies/one man companies"){
+			$LegalType="2";	
+		}
+		if($LegalType=="Freelance workers/professionals"){
+			$LegalType="3";	
+		}
+		if($LegalType=="non-profit organizations"){
+			$LegalType="4";	
+		}
+		if($LegalType=="public organizations"){
+			$LegalType="5";	
+		}
+		if($LegalType=="other subjects"){
+			$LegalType="6";	
+		}
+		if($LegalType=="non natural foreigners"){
+			$LegalType="7";	
+		} 
+		//end extra attributes 
+	  
 	$tld = encodetolatin($params["tld"]);
 	$sld = encodetolatin($params["sld"]);
 	$regperiod = $params["regperiod"];
@@ -512,7 +542,7 @@ $sql="select * from tbldomains,tblorders  where tbldomains.orderid=tblorders.id 
 	}
 	
 	$json = new Services_JSON();
-	$jsonarray=array("request"=>array("do"=>'domainregister',"username"=>$username,"password"=>$password,"apiKey"=>$apikey,"domainname"=>$sld.".".$tld,"description"=>$description,"ip1"=>' ',"ip2"=>' ',"ip3"=>' ',"ip4"=>' ',"ns1"=>encodetolatin($params["ns1"]),"ns2"=>encodetolatin($params["ns2"]),"ns3"=>encodetolatin($params["ns3"]),"ns4"=>encodetolatin($params["ns4"]),"owner_fullname"=>encodetolatin($params["companyname"]),"owner_firstname"=>encodetolatin($params["firstname"]),"owner_lastname"=>encodetolatin($params["lastname"]),"owner_email"=>encodetolatin($params["email"]),"owner_address"=>encodetolatin($params["address1"]),"owner_state"=>encodetolatin($params["state"]),"owner_city"=>encodetolatin($params["city"]),"owner_postcode"=>encodetolatin($params["postcode"]),"owner_country"=>encodetolatin($params["country"]),"owner_phone"=> encodetolatin($params["phonenumber"]),"owner_fax"=>'+30.2',"owner_litepsd"=>' ',"owner_title"=>' ',"regperiod"=>$params["regperiod"],"idprotect"=>$idprotection,"customer_language"=>"gr"));
+	$jsonarray=array("request"=>array("do"=>'domainregister',"username"=>$username,"password"=>$password,"apiKey"=>$apikey,"domainname"=>$sld.".".$tld,"description"=>$description,"ip1"=>' ',"ip2"=>' ',"ip3"=>' ',"ip4"=>' ',"ns1"=>encodetolatin($params["ns1"]),"ns2"=>encodetolatin($params["ns2"]),"ns3"=>encodetolatin($params["ns3"]),"ns4"=>encodetolatin($params["ns4"]),"owner_fullname"=>encodetolatin($params["companyname"]),"owner_firstname"=>encodetolatin($params["firstname"]),"owner_lastname"=>encodetolatin($params["lastname"]),"owner_email"=>encodetolatin($params["email"]),"owner_address"=>encodetolatin($params["address1"]),"owner_state"=>encodetolatin($params["state"]),"owner_city"=>encodetolatin($params["city"]),"owner_postcode"=>encodetolatin($params["postcode"]),"owner_country"=>encodetolatin($params["country"]),"owner_phone"=> encodetolatin($params["phonenumber"]),"owner_fax"=>'+30.2',"owner_litepsd"=>' ',"owner_title"=>' ',"regperiod"=>$params["regperiod"],"idprotect"=>$idprotection,"customer_language"=>"gr","extraattributes"=>array("entity_type"=>$LegalType,"nationality_code"=>$tax_id,"reg_code"=>$extra_country)));
 	$Xpost = $json->encode($jsonarray);
 	$Xpost=latintogreek($Xpost);
 	
