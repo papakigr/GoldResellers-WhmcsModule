@@ -23,7 +23,7 @@ Installation
 	
 	
 	For Domain Name Search:
-	A) If you use Whmcs Version older than 7.0.0. then
+	A) If you use Whmcs Version older than 7.0.0 then
 		1) Download from your server the file includes/whoisservers.php
 		2) At the end of the file add:
 		.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
@@ -36,12 +36,13 @@ Installation
 		3) Open the file whois/whois.php and put your apikey.
 		4) Go to the folder whmcs at your server and upload the folder whois 
 	
-	B) If you use Whmcs Version greater or equal to 7.0.0. then
+	B) If you use Whmcs Version greater or equal to 7.0.0 then
 		1) Open the file whois.json which is in the folder "DomainSearchFiles" 
 		2) Open the file whois/whois.php and put your apikey.
 		3) Go to the folder whmcs at your server and upload the folder whois 
 		4) At the file whois.json replace the word "mysite" with your site url to whois/whois.php
-		5) upload the file whois.json at the  folder /resources/domains/  (See here  http://docs.whmcs.com/WHOIS_Servers )
+		5) upload the file whois.json at the  folder /resources/domains/
+		(See here  http://docs.whmcs.com/WHOIS_Servers )
 
 HOOKS and SYNCHRONIZATION require whmcs version greater than 5.1.3 and php greater than 3 
 
