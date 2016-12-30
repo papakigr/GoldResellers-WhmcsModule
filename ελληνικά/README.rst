@@ -26,19 +26,30 @@ Papaki Module Whmcs
 	
 	
 	Για να δουλεύει σωστά η αναζήτηση ονομάτων χώρου θα πρέπει να κάνετε τις εξής αλλαγές:
-	1) Κάντε download από τον server σας το αρχείο includes/whoisservers.php
-	2) Στο τέλος αυτού του αρχείου θα προσθέσετε τις γραμμές
-	.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
-	.com.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
-	.net.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
-	.gov.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
-	.edu.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
-	.org.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
-	.eu|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
-	3) Ανοίξτε το αρχείο whois/whois.php και βάλτε το apikey που έχετε στο papaki.
-	4) Κάντε upload μέσα στον φάκελο που έχετε το whmcs τον φάκελο whois.
-	5) Όπου στο αρχείο whoisserver.php λέει mysite βάλτε το url για το δικό σας whois/whois.php
-	το οποίο κάνατε upload.
+	A) Αν η έκδοση της whmcs σας είναι μικρότερη από 7.0.0 τότε ακολουθήσε τα παρακάτω βήματα
+		1) Κάντε download από τον server σας το αρχείο includes/whoisservers.php
+		2) Στο τέλος αυτού του αρχείου θα προσθέσετε τις γραμμές
+		.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
+		.com.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
+		.net.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
+		.gov.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
+		.edu.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
+		.org.gr|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
+		.eu|www.mysite.gr/whmcs/whois/whois.php?domainName=|HTTPREQUEST-not registered
+		3) Ανοίξτε το αρχείο whois/whois.php και βάλτε το apikey που έχετε στο papaki.
+		4) Κάντε upload μέσα στον φάκελο που έχετε το whmcs τον φάκελο whois.
+		5) Όπου στο αρχείο whoisserver.php λέει mysite βάλτε το url για το δικό σας whois/whois.php
+		το οποίο κάνατε upload.
+	
+	B) Αν η έκδοση της whmcs σας είναι μεγαλύτερη ή ίση της 7.0.0 τότε ακολουθήσε τα παρακάτω βήματα 
+		1) Ανοίξτε το αρχείο whois.json που βρίσκεται στον φάκελο DomainSearchFiles στα αρχεία
+		που έχετε κατεβάσει
+		2) Ανοίξτε το αρχείο whois/whois.php και βάλτε το apikey που έχετε στο papaki.
+		3) Κάντε upload μέσα στον φάκελο που έχετε το whmcs τον φάκελο whois.
+		4) Όπου στο αρχείο whois.json  λέει mysite βάλτε το url για το δικό σας whois/whois.php
+		το οποίο κάνατε upload.
+		5) Ανεβάστε το  αρχείο whois.json στον server ,στο μονοπάτι /resources/domains/
+		όπως αναφέρει η whmcs εδώ http://docs.whmcs.com/WHOIS_Servers
 
 Οι δυνατότητες που ακολουθούν (HOOKS,SYΝCHRONIZATION) μπορούν να εφαρμοστούν στο site σας μόνο αν 
 έχετε whmcs version από 5.1.4 και πάνω και php από 4 και πάνω.
