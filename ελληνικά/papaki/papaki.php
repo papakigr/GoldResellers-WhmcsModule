@@ -1,5 +1,6 @@
 <?php
-use WHMCS\Database\Capsule;
+require_once($_SERVER['DOCUMENT_ROOT'] . '/init.php');
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 set_time_limit(200);
 
@@ -365,17 +366,17 @@ function papaki_registerdomain($params)
 
         }
 
-        $params["companyname"] = $contactarray{'companyname'};
-        $params["firstname"] = $contactarray{'firstname'};
-        $params["lastname"] = $contactarray{'lastname'};
-        $params["address1"] = $contactarray{'address1'};
-        $params["address2"] = $contactarray{'address2'};
-        $params["city"] = $contactarray{'city'};
-        $params["state"] = $contactarray{'state'};
-        $params["postcode"] = $contactarray{'postcode'};
-        $params["country"] = $contactarray{'country'};
-        $params["email"] = $contactarray{'email'};
-        $params["phonenumber"] = $contactarray{'phonenumber'};
+        $params["companyname"] = $contactarray['0']->companyname;
+        $params["firstname"] = $contactarray['0']->firstname;
+        $params["lastname"] = $contactarray['0']->lastname;
+        $params["address1"] = $contactarray['0']->address1;
+        $params["address2"] = $contactarray['0']->address2;
+        $params["city"] = $contactarray['0']->city;
+        $params["state"] = $contactarray['0']->state;
+        $params["postcode"] = $contactarray['0']->postcode;
+        $params["country"] = $contactarray['0']->country;
+        $params["email"] = $contactarray['0']->email;
+        $params["phonenumber"] = $contactarray['0']->phonenumber;
     }
 
 
