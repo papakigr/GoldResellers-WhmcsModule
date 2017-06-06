@@ -115,7 +115,7 @@ TEST ENVIRONMENT
 	Αν θέλετε το Module της whmcs να δουλεύει στο test environment τότε θα πρέπει να κάνετε τα εξής:
 	Από το configuration-> domain registrars->registrar settings επιλέξτε το papaki 
 	και στη συνέχεια συμπληρώστε τo test apiKey που έχετε στο Papaki.gr και σαν 
-	PostUrl το https://api-test.papaki.gr/register_url2.aspx.
+	PostUrl το https://api-test.papaki.com/register_url2.aspx.
 	
 
 

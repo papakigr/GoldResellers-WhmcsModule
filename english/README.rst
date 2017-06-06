@@ -98,7 +98,7 @@ TEST ENVIRONMENT
 
 	If you want to use the test environment :
 	Go to configuration-> domain registrars->registrar settings select papaki , 
-	fill your test apikey and the test post url: https://api-test.papaki.gr/register_url2.aspx. 
+	fill your test apikey and the test post url: https://api-test.papaki.com/register_url2.aspx.
 
 
  
