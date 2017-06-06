@@ -4,7 +4,7 @@
  define("API_USERNAME_HOOK", "admin");												//place your API_USERNAME
  define("API_PASSWORD_HOOK", "mypassword");											//place your API_PASSWORD 		
  define("APIKEY_HOOK", "myapikey");													//place your papaki apikey 
- define("POSTURL_HOOK", "https://api.papaki.gr/register_url2.aspx");
+ define("POSTURL_HOOK", "https://api.papaki.com/register_url2.aspx");
 
  
 

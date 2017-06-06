@@ -20,7 +20,7 @@ function papaki_getConfigArray() {
 	// "Username" => array( "Type" => "text", "Size" => "20", "Description" => "Enter the username given from Papaki (Leave empty if Apikey is used)", ),
 //	 "Password" => array( "Type" => "password", "Size" => "20", "Description" => "Enter the password given from Papaki (Leave empty if Apikey is used)", ),
 	 "APIkey" => array( "Type" => "text", "Size" => "100", "Description" => "Enter the apikey", ),
-	 "PostUrl" => array( "Type" => "text", "Size" => "64", "Description" => "Enter https://api.papaki.gr/register_url2.aspx", ),
+	 "PostUrl" => array( "Type" => "text", "Size" => "64", "Description" => "Enter https://api.papaki.com/register_url2.aspx", ),
 	"check24hours" => array( "FriendlyName" => "Περιορισμός πολλαπλών ανανεώσεων", "Type" => "yesno", "Description" => "Εάν είναι τσεκαρισμένο περιορίζει τις πολλαπλές ανανεώσεις ονομάτων χώρου σε διάστημα 24 ωρών. Προτείνουμε για λόγους ασφαλείας να το έχετε τσεκαρισμένο σε περίπτωση που σταλεί κάποια ανανέωση πολλές φορές χωρίς να το επιθυμείτε", ),
 	"TestMode" => array( "Type" => "no", ),
 	 "Convert Punycode domains" => array( "Type" => "no", ),

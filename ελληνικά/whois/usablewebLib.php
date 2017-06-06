@@ -67,7 +67,7 @@ class PapakiDomainNameSearch{
 	function PapakiDomainNameSearch($domainName, $ext="ext_", $lang="el",$test="False"){
 		//die($domainName);
 		$this->use_curl = false;
-		$this->requestURL ="https://api.papaki.gr/register_url2.aspx";
+		$this->requestURL ="https://api.papaki.com/register_url2.aspx";
 		$this->checkBoxPrefix = $ext;
 		$this->lang = $lang;
 		//$this->type = $type;
