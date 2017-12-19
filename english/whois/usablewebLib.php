@@ -126,7 +126,7 @@ class PapakiDomainNameSearch
 
     public function parseResponse($executed = true)
     {
-		if(!is_object($this->responsearray->response)){
+		if(!is_object($this->responsearray) || !is_object($this->responsearray->response)){
 			$message = 'Unknown error';
 			exit();
 		}
