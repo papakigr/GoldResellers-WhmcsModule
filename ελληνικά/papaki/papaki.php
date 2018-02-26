@@ -510,6 +510,9 @@ $sql="select * from tbldomains,tblorders  where tbldomains.orderid=tblorders.id 
 	  $nameserver3= ' ';
 	  if (trim($nameserver4)=='')
 	  $nameserver4= ' ';
+
+	$params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
+	$params["adminphonenumber"]=strtr($params["adminphonenumber"],array(" " => ""));
 	# Registrant Details
 	$RegistrantFirstName = encodetolatin($params["firstname"]);
 	$RegistrantLastName = encodetolatin($params["lastname"]);

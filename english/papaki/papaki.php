@@ -496,6 +496,10 @@ function papaki_registerdomain($params) {
         $nameserver3 = ' ';
     if (trim($nameserver4) == '')
         $nameserver4 = ' ';
+    
+    $params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
+    $params["adminphonenumber"]=strtr($params["adminphonenumber"],array(" " => ""));
+    
     # Registrant Details
     $RegistrantFirstName = encodetolatin($params["firstname"]);
     $RegistrantLastName = encodetolatin($params["lastname"]);
@@ -525,7 +529,7 @@ function papaki_registerdomain($params) {
     if (!(startswith($params["phonenumber"], "+")) and ! (startswith($params["phonenumber"], "00"))) {
         $params["phonenumber"] = '+30.' . $params["phonenumber"];
     }
-
+    
     $json = new Services_JSON();
     $jsonarray = array("request" => array("do" => 'domainregister', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "description" => $description, "ip1" => ' ', "ip2" => ' ', "ip3" => ' ', "ip4" => ' ', "ns1" => encodetolatin($params["ns1"]), "ns2" => encodetolatin($params["ns2"]), "ns3" => encodetolatin($params["ns3"]), "ns4" => encodetolatin($params["ns4"]), "owner_fullname" => encodetolatin($params["companyname"]), "owner_firstname" => encodetolatin($params["firstname"]), "owner_lastname" => encodetolatin($params["lastname"]), "owner_email" => encodetolatin($params["email"]), "owner_address" => encodetolatin($params["address1"]), "owner_state" => encodetolatin($params["state"]), "owner_city" => encodetolatin($params["city"]), "owner_postcode" => encodetolatin($params["postcode"]), "owner_country" => encodetolatin($params["country"]), "owner_phone" => encodetolatin($params["phonenumber"]), "owner_fax" => '+30.2', "owner_litepsd" => ' ', "owner_title" => ' ', "regperiod" => $params["regperiod"], "idprotect" => $idprotection, "customer_language" => "gr", "extraattributes" => array("entity_type" => $LegalType, "nationality_code" => $extra_country,
         "reg_code" =>$tax_id )));
