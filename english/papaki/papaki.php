@@ -622,7 +622,8 @@ function papaki_TransferDomain($params) {
 
 
 /////////////////////////////////////////////////////////////
-
+    $params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
+	$params["adminphonenumber"]=strtr($params["adminphonenumber"],array(" " => ""));
 
     $username = '';
     $password = '';

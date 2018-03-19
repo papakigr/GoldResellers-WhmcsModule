@@ -636,10 +636,11 @@ $sql="select * from tbldomains,tblorders  where tbldomains.orderid=tblorders.id 
 		}
 		
 	}
-
+	
 
 /////////////////////////////////////////////////////////////
-
+	$params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
+	$params["adminphonenumber"]=strtr($params["adminphonenumber"],array(" " => ""));
 
 	$username ='';
 	$password = '';
