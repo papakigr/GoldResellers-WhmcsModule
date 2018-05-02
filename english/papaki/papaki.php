@@ -692,7 +692,7 @@ function papaki_TransferDomain($params) {
 
     $json = new Services_JSON();
 
-    if (!isgrdomain($sld . "." . $tld) and ! iseudomain($sld . "." . $tld)) {
+    if (!isgrdomain($sld . "." . $tld)) {
         $jsonarray = array("request" => array("do" => 'changeregistrar', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "customer_language" => 'gr', "authcode" => $transfersecret, "RegistrantContact" => array("firstname" => $RegistrantFirstName, "lastname" => $RegistrantLastName, "fullname" => $RegistrantFullName, "email" => $RegistrantEmailAddress, "address" => $RegistrantAddress1, "state" => $RegistrantStateProvince, "city" => $RegistrantCity, "postcode" => $RegistrantPostalCode, "country" => $RegistrantCountry, "phone" => $RegistrantPhone, "fax" => "")));
     } else {
         $jsonarray = array("request" => array("do" => 'changeregistrar', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "customer_language" => 'gr', "authcode" => $transfersecret));
