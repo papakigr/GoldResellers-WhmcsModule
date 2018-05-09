@@ -19,7 +19,7 @@ function papaki_getConfigArray()
 		"PostUrl" => array(
 			"Type" => "text",
 			"Size" => "64",
-			"Description" => "Enter https://api.papaki.gr/register_url2.aspx",
+			"Description" => "Enter https://api.papaki.com/register_url2.aspx",
 		),
 		"check24hours" => array(
 			"FriendlyName" => "Prevent multiple domain renewal",
@@ -432,6 +432,7 @@ function papaki_registerdomain($params)
 		$idprotection = "false";
 	}
 
+    $params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
 
 	if (!(startswith($params["phonenumber"], "+")) and !(startswith($params["phonenumber"], "00"))) {
 		$params["phonenumber"] = '+30.' . $params["phonenumber"];
@@ -473,8 +474,8 @@ function papaki_registerdomain($params)
 			"customer_language" => "gr",
 			"extraattributes" => array(
 				"entity_type" => $LegalType,
-				"nationality_code" => $tax_id,
-				"reg_code" => $extra_country
+				"nationality_code" => $extra_country,
+				"reg_code" => $tax_id
 			)
 		)
 	);
@@ -574,6 +575,8 @@ function papaki_TransferDomain($params)
 
 	}
 
+    $params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
+
 
 	# Registrant Details
 	$RegistrantFullName = encodetolatin($params["companyname"]);
@@ -595,7 +598,7 @@ function papaki_TransferDomain($params)
 
 	$json = new Services_JSON();
 
-	if (!isgrdomain($sld . "." . $tld) and !iseudomain($sld . "." . $tld)) {
+	if (!isgrdomain($sld . "." . $tld) ) {
 		$jsonarray = array(
 			"request" => array(
 				"do" => 'changeregistrar',
@@ -616,7 +619,8 @@ function papaki_TransferDomain($params)
 					"postcode" => $RegistrantPostalCode,
 					"country" => $RegistrantCountry,
 					"phone" => $RegistrantPhone,
-					"fax" => ""
+					"fax" => "",
+                    "title" => ''
 				)
 			)
 		);

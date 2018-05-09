@@ -1,8 +1,8 @@
 ﻿<?php
 
 //require ('libs/HttpClient.class.php');
-require('libs/HttpClient.class.php');
-require_once('json.php');
+require 'libs/HttpClient.class.php';
+require_once 'json.php';
 /****************************************************************************************
  *                           UsableWeb Domain Name Search
  *---------------------------------------------------------------------------------------*
@@ -41,35 +41,35 @@ define("_TYPE_WHOIS", "whois");
 class PapakiDomainNameSearch
 {
     //Property declaration
-    var $requestURL;
-    var $checkBoxPrefix;
-    var $password;
-    var $username;
-    var $apikey;
-    var $lang;
-    var $type;
-    var $test;
-    var $domainName;
-    var $extensions; //seperated by commas.
-    var $requestXML;
-    var $responseXML;
-    var $responsearray;
+    public $requestURL;
+    public $checkBoxPrefix;
+    public $password;
+    public $username;
+    public $apikey;
+    public $lang;
+    public $type;
+    public $test;
+    public $domainName;
+    public $extensions; //seperated by commas.
+    public $requestXML;
+    public $responseXML;
+    public $responsearray;
 
-    var $version = '1.2-Active Net';
+    public $version = '1.2-Active Net';
 
-    var $use_curl; //There are two method for sending the request and grubing the response by default the class using 'grabResponse()' method if u want to usa 'clientXML()' method set this variable to true.
+    public $use_curl; //There are two method for sending the request and grubing the response by default the class using 'grabResponse()' method if u want to usa 'clientXML()' method set this variable to true.
 
-    var $arrayAvDomains;
-    var $arrayNotAvDomains;
-    var $whois_response;
+    public $arrayAvDomains;
+    public $arrayNotAvDomains;
+    public $whois_response;
 
     //Class constructor -- declaring default values
     //Takes arguments $domainName argument the other arguments are optional.
-    function PapakiDomainNameSearch($domainName, $ext = "ext_", $lang = "el", $test = "False")
+    public function PapakiDomainNameSearch($domainName, $ext = "ext_", $lang = "el", $test = "False")
     {
         //die($domainName);
         $this->use_curl = false;
-        $this->requestURL = "https://api.papaki.gr/register_url2.aspx";
+        $this->requestURL = "https://api.papaki.com/register_url2.aspx";
         $this->checkBoxPrefix = $ext;
         $this->lang = $lang;
         //$this->type = $type;
@@ -81,7 +81,7 @@ class PapakiDomainNameSearch
     //Takes 2 optional arguments $type: is the type of the request, we want to perform - domain name search or whois search
     //$use_get_extenssions_func:(works only with $type = _TYPE_DS) boolean if we use the '$this->getExtensions()' function or passes the
     //extension by the $this->extensions property
-    function exec_request_for($type = _TYPE_DS, $use_get_extenssions_func = true)
+    public function exec_request_for($type = _TYPE_DS, $use_get_extenssions_func = true)
     {
         $this->type = $type;
 
@@ -122,7 +122,7 @@ class PapakiDomainNameSearch
 
 
         $pageContents = HttpClient::quickPost($this->requestURL, array(
-            'message' => $Xpost
+            'message' => $Xpost,
         ));
 
 
@@ -136,8 +136,7 @@ class PapakiDomainNameSearch
 
     }
 
-
-    function grabResponse()
+    public function grabResponse()
     {
         $this->responseXML = "";
         $Xpost = $this->requestXML;
@@ -152,9 +151,12 @@ class PapakiDomainNameSearch
         $this->parseResponse();
     }
 
-    function parseResponse($executed = true)
+    public function parseResponse($executed = true)
     {
-
+		if(!is_object($this->responsearray) || !is_object($this->responsearray->response)){
+			$message = 'Unknown error';
+			exit();
+		}
         $codeNode = $this->responsearray->response->code;
 
 
@@ -165,6 +167,7 @@ class PapakiDomainNameSearch
         }
 
         if ($this->type == _TYPE_DS) {
+            if (property_exists($this->responsearray->response, 'availableDomains')) {
             $avDomains = $this->responsearray->response->availableDomains;
 
             $json = new Services_JSON();
@@ -172,8 +175,7 @@ class PapakiDomainNameSearch
             if ($tempresponsearray->domain != "") {
                 array_push($this->arrayAvDomains, $tempresponsearray->domain);
             }
-
-
+            }
         } elseif ($this->type = _TYPE_WHOIS) {
 
             $body = $this->responsearray->response->whoisReply;
@@ -196,8 +198,7 @@ class PapakiDomainNameSearch
         }
     }
 
-
-    function fix_spaces($str)
+    public function fix_spaces($str)
     {
         $s = split('[/,\]', $str);
         //print_r($s);
@@ -208,7 +209,7 @@ class PapakiDomainNameSearch
         return substr($return, 0, strlen($return) - 1);
     }
 
-    function GrantAccess($pass)
+    public function GrantAccess($pass)
     {
         if ($pass == $this->password) {
             return true;
@@ -217,8 +218,9 @@ class PapakiDomainNameSearch
         }
     }
 
-    function StripHTML($str)
+    public function StripHTML($str)
     {
+        $return = '';
         $openTag = "false";
         for ($i = 0; $i < strlen($str); $i++) {
             if (substr($str, $i, 1) == "<") {
@@ -369,7 +371,6 @@ function latintogreek($mystring)
     $mystring = str_replace("&omega;", "ω", $mystring);
     $mystring = str_replace("&sigmaf;", "ς", $mystring);
 
-
     $mystring = str_replace("&#940;", "ά", $mystring);
     $mystring = str_replace("&#941;", "έ", $mystring);
     $mystring = str_replace("&#974;", "ώ", $mystring);
@@ -389,14 +390,10 @@ function latintogreek($mystring)
     $mystring = str_replace("&#912;", "ΐ", $mystring);
     $mystring = str_replace("&#971;", "ϋ", $mystring);
     $mystring = str_replace("&#944;", "ΰ", $mystring);
-
     return $mystring;
 }
 
-
 //if ($_GET['debug'] == 'true' && $_GET['version'] == 'true'){
-//	$udns = new PapakiDomainNameSearch('');
-//	echo ('<b>Class version:</b> ' . $udns->version);
+//    $udns = new PapakiDomainNameSearch('');
+//    echo ('<b>Class version:</b> ' . $udns->version);
 //}
-
-?>

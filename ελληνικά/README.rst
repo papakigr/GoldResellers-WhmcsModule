@@ -65,7 +65,7 @@ HOOKS
 	στον φάκελο hookfile:
 	1) Για να λειτουργήσει το hook θα πρέπει να έχετε ενεργοποιήσει τη δυνατότητα χρησιμοποίησης
 	του api του whmcs μέσα από το site σας. Για να το κάνετε αυτό ακολουθήστε τις οδηγίες που βρίσκονται εδώ:
-	http://docs.whmcs.com/API#External_API στην παράγραφο "API User Setup"
+	https://developers.whmcs.com/api/authentication/ στην παράγραφο "Authenticating With Login Credentials"
 	2) Ανοίξτε το αρχείο domainregistrationhook.php και βάλτε μέσα στον κώδικα τα εξής:
 	API URL συνήθως είναι (https://www.mysite.gr/whmcs/includes/api.php)
 	API_USERNAME (είναι το admin username σας)
@@ -88,8 +88,8 @@ SYNCHRONIZATION
 	θα πρέπει να κάνετε τα εξής:
 	
 	1) Αρχικά να κάνετε τις ρυθμίσεις που θέλετε για το SYNCHRONIZATION όπως αναφέρεται εδώ:
-	http://docs.whmcs.com/Registrar_Module_Developer_Docs
-	Δηλαδή, θα πρέπει να πάτε στο Setup > General Settings > Domains area και να επιλέξετε αυτά 
+	https://docs.whmcs.com/Domain_Synchronisation
+	Δηλαδή, θα πρέπει να πάτε στο Setup > General Settings > Domains tab και να επιλέξετε αυτά 
 	που θέλετε στις επιλογές:
 	α)Domain Sync Enabled - Πρέπει να είναι τσεκαρισμένο για να λειτουργεί το SYNCHRONIZATION.
 	β)Sync Next Due Date - Πρέπει να είναι τσεκαρισμένο αν θέλετε να ανανεώνονται και τα next due dates, 
@@ -115,7 +115,7 @@ TEST ENVIRONMENT
 	Αν θέλετε το Module της whmcs να δουλεύει στο test environment τότε θα πρέπει να κάνετε τα εξής:
 	Από το configuration-> domain registrars->registrar settings επιλέξτε το papaki 
 	και στη συνέχεια συμπληρώστε τo test apiKey που έχετε στο Papaki.gr και σαν 
-	PostUrl το https://api-test.papaki.gr/register_url2.aspx.
+	PostUrl το https://api-test.papaki.com/register_url2.aspx.
 	
 
 

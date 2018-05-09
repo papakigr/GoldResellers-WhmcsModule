@@ -55,7 +55,7 @@ HOOKS
 	a successful registration or domain renewal.
 	
 	1) You have to enable whmcs api as you can see at:
-	http://docs.whmcs.com/API#External_API at section "API User Setup"
+	https://developers.whmcs.com/api/authentication/ at section "Authenticating With Login Credentials"
 	2) Open the file domainregistrationhook.php and place:
 	API URL (https://www.mysite.gr/whmcs/includes/api.php)
 	API_USERNAME ( admin username )
@@ -72,7 +72,7 @@ SYNCHRONIZATION
 
 	If you want to synchronize the expiration date of the domains with Papaki you can use a cron job
 
-	1)Settings related to domain synchronizing can be found in the Setup > General Settings > Domains area.
+	1)Settings related to domain synchronizing can be found in the Setup > General Settings > Domains tab.
 	There are 3 key settings:
 	Domain Sync Enabled - This must be ticked in order to allow the domain sync cron to actually run.
 	Sync Next Due Date - This setting should be enabled, if you want the synchronization process to
@@ -98,7 +98,7 @@ TEST ENVIRONMENT
 
 	If you want to use the test environment :
 	Go to configuration-> domain registrars->registrar settings select papaki , 
-	fill your test apikey and the test post url: https://api-test.papaki.gr/register_url2.aspx. 
+	fill your test apikey and the test post url: https://api-test.papaki.com/register_url2.aspx.
 
 
  

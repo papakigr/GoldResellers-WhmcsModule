@@ -1,7 +1,7 @@
 <!-- Warning this page Charset must be UTF-8-->
 <?php
-
-require("usablewebLib.php");
+//version 2.0
+require "usablewebLib.php";
 
 $pap_apikey = 'myapikey';      //place your apikey here
 
@@ -11,7 +11,7 @@ $thedomain = trim($_REQUEST["domainName"]);
 $pieces = explode(".", $thedomain);
 $countarray = count($pieces);
 
-$temp = $countarray;
+$temp = $countarray - 1;
 $myext = "";
 while ($temp > 0) {
     if ($myext != "") {
@@ -37,7 +37,7 @@ if (count($search->arrayAvDomains) != 0) {
     for ($i = 0; $i < count($search->arrayAvDomains); $i++) {
 
         echo $search->arrayAvDomains[$i] . "<br>";
-        if (trim($search->arrayAvDomains[$i]) == trim($_REQUEST["domainName"])) {
+        if (strtolower(trim($search->arrayAvDomains[$i])) == strtolower(trim($_REQUEST["domainName"]))){
             echo "Domain is not registered";
         }
 

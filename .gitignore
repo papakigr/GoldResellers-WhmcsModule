@@ -15,6 +15,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+nbproject
 
 # External tool builders
 .externalToolBuilders/
@@ -217,11 +218,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
-.idea/.name
-.idea/copyright/profiles_settings.xml
-.idea/GoldResellers-WhmcsModule.iml
-.idea/encodings.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/vcs.xml
-.idea/workspace.xml
+/nbproject/private/
