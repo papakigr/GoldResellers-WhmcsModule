@@ -1,4 +1,3 @@
-<!-- Warning this page Charset must be UTF-8-->
 <?php
 //version 2.0
 require "usablewebLib.php";

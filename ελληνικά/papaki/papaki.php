@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/init.php');
+
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 set_time_limit(200);
