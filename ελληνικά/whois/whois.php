@@ -3,7 +3,8 @@
 //version 2.0
 require "usablewebLib.php";
 
-$pap_apikey = 'myapikey'; //place your apikey here
+$pap_apikey = 'myapikey';      //place your apikey here
+
 
 $thedomain = trim($_REQUEST["domainName"]);
 
@@ -28,7 +29,9 @@ $search->use_curl = true;
 
 $search->extensions = "." . $myext;
 
+
 $search->exec_request_for(_TYPE_DS, true);
+
 
 if (count($search->arrayAvDomains) != 0) {
     for ($i = 0; $i < count($search->arrayAvDomains); $i++) {
@@ -37,6 +40,7 @@ if (count($search->arrayAvDomains) != 0) {
         if (strtolower(trim($search->arrayAvDomains[$i])) == strtolower(trim($_REQUEST["domainName"]))){
             echo "Domain is not registered";
         }
+
 
     }
 } else {
@@ -48,7 +52,7 @@ if (count($search->arrayAvDomains) != 0) {
 
     $search2->exec_request_for(_TYPE_WHOIS);
     ?>
-					<?PHP echo $search2->whois_response; ?>	 <?PHP
+    <?PHP echo $search2->whois_response; ?><?PHP
 }
 
 function myEndsWith($Haystack, $Needle)
@@ -56,6 +60,7 @@ function myEndsWith($Haystack, $Needle)
     // Recommended version, using strpos
     return strrpos($Haystack, $Needle) === strlen($Haystack) - strlen($Needle);
 }
+
 ?>
 
 

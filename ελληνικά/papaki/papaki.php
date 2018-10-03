@@ -1,84 +1,97 @@
 <?php
-set_time_limit(200);
-//version 9 :  noemvrios 2011
-//require ('libs/ActiveLink/alink_include.php');
-//import('org.active-link.net.HTTPClient');
-//import('org.active-link.xml.XMLDocument');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/init.php');
+use Illuminate\Database\Capsule\Manager as Capsule;
 
-require 'libs/ActiveLink/alink_include.php';
+set_time_limit(200);
+
+require('libs/ActiveLink/alink_include.php');
 import('org.active-link.xml.XMLDocument');
 
-require 'libs/HttpClient.class.php';
-require_once 'json.php';
+require('libs/HttpClient.class.php');
+require_once('json.php');
+
 
 function papaki_getConfigArray()
 {
     $configarray = array(
-        // "Username" => array( "Type" => "text", "Size" => "20", "Description" => "Enter the username given from Papaki (Leave empty if Apikey is used)", ),
-        //     "Password" => array( "Type" => "password", "Size" => "20", "Description" => "Enter the password given from Papaki (Leave empty if Apikey is used)", ),
-        "APIkey" => array("Type" => "text", "Size" => "100", "Description" => "Enter the apikey"),
-        "PostUrl" => array("Type" => "text", "Size" => "64", "Description" => "Enter https://api.papaki.com/register_url2.aspx"),
-        "check24hours" => array("FriendlyName" => "Περιορισμός πολλαπλών ανανεώσεων", "Type" => "yesno", "Description" => "Εάν είναι τσεκαρισμένο περιορίζει τις πολλαπλές ανανεώσεις ονομάτων χώρου σε διάστημα 24 ωρών. Προτείνουμε για λόγους ασφαλείας να το έχετε τσεκαρισμένο σε περίπτωση που σταλεί κάποια ανανέωση πολλές φορές χωρίς να το επιθυμείτε"),
-        "TestMode" => array("Type" => "no"),
-        "Convert Punycode domains" => array("Type" => "no"),
+        "APIkey" => array("Type" => "text", "Size" => "100", "Description" => "Enter the apikey",),
+        "PostUrl" => array(
+            "Type" => "text",
+            "Size" => "64",
+            "Description" => "Enter https://api.papaki.com/register_url2.aspx",
+        ),
+        "check24hours" => array(
+            "FriendlyName" => "Περιορισμός πολλαπλών ανανεώσεων",
+            "Type" => "yesno",
+            "Description" => "Εάν είναι τσεκαρισμένο περιορίζει τις πολλαπλές ανανεώσεις ονομάτων χώρου σε διάστημα 24 ωρών. Προτείνουμε για λόγους ασφαλείας να το έχετε τσεκαρισμένο σε περίπτωση που σταλεί κάποια ανανέωση πολλές φορές χωρίς να το επιθυμείτε",
+        ),
+        "TestMode" => array("Type" => "no",),
+        "Convert Punycode domains" => array("Type" => "no",),
     );
+
     return $configarray;
 }
 
 function papaki_GetNameservers($params)
 {
+    $values = array();
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
-    # Put your code to get the nameservers here and return the values below
+
 
     $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'getnameservers', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld));
+    $jsonarray = array(
+        "request" => array(
+            "do" => 'getnameservers',
+            "username" => $username,
+            "password" => $password,
+            "apiKey" => $apikey,
+            "domainname" => $sld . "." . $tld
+        )
+    );
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
+
 
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
     $message = $responsearray->response->message;
+
 
     $nameserver1 = $responsearray->response->ns1;
     $nameserver2 = $responsearray->response->ns2;
     $nameserver3 = $responsearray->response->ns3;
     $nameserver4 = $responsearray->response->ns4;
 
+
     if ($codeNode != "1000") {
 
         $values["error"] = 'Error: ' . $codeNode . ' - ' . $message;
     }
 
-    #####################################
 
     $values["ns1"] = $nameserver1;
     $values["ns2"] = $nameserver2;
     $values["ns3"] = $nameserver3;
     $values["ns4"] = $nameserver4;
-    # If error, return the error message in the value below
-    //$values["error"] = $error;
+
     return $values;
 }
 
 function papaki_SaveNameservers($params)
 {
+    $values = array();
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $testmode = encodetolatin($params["TestMode"]);
-    $posturl = encodetolatin($params["PostUrl"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
     $nameserver1 = $params["ns1"];
@@ -95,39 +108,38 @@ function papaki_SaveNameservers($params)
         if ($ip1 == $nameserver1) {
             $ip1 = "";
         }
-
     }
     if ($nameserver2 != "") {
         $ip2 = gethostbyname($nameserver2);
         if ($ip2 == $nameserver2) {
             $ip2 = "";
         }
-
     }
     if ($nameserver3 != "") {
         $ip3 = gethostbyname($nameserver3);
         if ($ip3 == $nameserver3) {
             $ip3 = "";
         }
-
     }
     if ($nameserver4 != "") {
         $ip4 = gethostbyname($nameserver4);
         if ($ip4 == $nameserver4) {
             $ip4 = "";
         }
-
     }
 
     $nsarray = array();
     $counting = 0;
+
 
     $nameserver1 = encodetolatin($params["ns1"]);
     $nameserver2 = encodetolatin($params["ns2"]);
     $nameserver3 = encodetolatin($params["ns3"]);
     $nameserver4 = encodetolatin($params["ns4"]);
 
+
     if ($ip1 != "") {
+
 
         $nsarray[$counting] = array("Name" => $nameserver1, "Ip" => $ip1);
         $counting = $counting + 1;
@@ -143,64 +155,83 @@ function papaki_SaveNameservers($params)
         $counting = $counting + 1;
     }
 
+
     if ($ip4 != "") {
         $nsarray[$counting] = array("Name" => $nameserver4, "Ip" => $ip4);
         $counting = $counting + 1;
     }
 
+
     $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'editnameservers', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "lang" => 'el', "NameServers" => array("v4" => $nsarray)));
+    $jsonarray = array(
+        "request" => array(
+            "do" => 'editnameservers',
+            "username" => $username,
+            "password" => $password,
+            "apiKey" => $apikey,
+            "domainname" => $sld . "." . $tld,
+            "lang" => 'el',
+            "NameServers" => array("v4" => $nsarray)
+        )
+    );
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
 
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
     $message = $responsearray->response->message;
 
+
     if ($codeNode != "1000") {
 
         $values["error"] = 'Error: ' . $codeNode . ' - ' . $message;
     }
 
-    #####################################
 
     return $values;
 }
 
 function papaki_GetRegistrarLock($params)
 {
+    $values = array();
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
-    # Put your code to get the lock status here
+
 
     if (isgrdomain($sld . "." . $tld) or iseudomain($sld . "." . $tld)) {
         $lockstatus = "unlocked";
+
         return $lockstatus;
     }
 
-    ########################
 
     $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'getregistrarlock', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "customer_language" => 'gr'));
+    $jsonarray = array(
+        "request" => array(
+            "do" => 'getregistrarlock',
+            "username" => $username,
+            "password" => $password,
+            "apiKey" => $apikey,
+            "domainname" => $sld . "." . $tld,
+            "customer_language" => 'gr'
+        )
+    );
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
+
 
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
@@ -208,10 +239,7 @@ function papaki_GetRegistrarLock($params)
 
     $lock = "0";
 
-    //echo "ns1".$nameserver1;
 
-    //echo $responseXML;
-    //die("");
     if ($codeNode != "1000") {
 
         $values["error"] = 'Error: ' . $codeNode . ' - ' . $message;
@@ -220,7 +248,6 @@ function papaki_GetRegistrarLock($params)
 
     }
 
-    #####################################
 
     if ($lock == "True") {
         $lockstatus = "locked";
@@ -233,13 +260,13 @@ function papaki_GetRegistrarLock($params)
 
 function papaki_SaveRegistrarLock($params)
 {
+    $values = array();
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
+
 
     if (isgrdomain($sld . "." . $tld) or iseudomain($sld . "." . $tld)) {
         return $values;
@@ -251,170 +278,120 @@ function papaki_SaveRegistrarLock($params)
         $lockstatus = "disable";
     }
 
+
     $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'reglock', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "customer_language" => 'gr', "locktype" => $lockstatus));
+    $jsonarray = array(
+        "request" => array(
+            "do" => 'reglock',
+            "username" => $username,
+            "password" => $password,
+            "apiKey" => $apikey,
+            "domainname" => $sld . "." . $tld,
+            "customer_language" => 'gr',
+            "locktype" => $lockstatus
+        )
+    );
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
-
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
 
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
     $message = $responsearray->response->message;
 
+
     if ($codeNode != "1000") {
 
         $values["error"] = 'Error: ' . $codeNode . ' - ' . $message;
     }
 
-    //
 
-    # Put your code to save the registrar lock here
-    # If error, return the error message in the value below
-    //$values["error"] = $Enom->Values["Err1"];
     return $values;
 }
 
+
 function papaki_GetEmailForwarding($params)
 { //den uposthrizetai apo to Api
-    $username = '';
-    $password = '';
 
-    $testmode = $params["TestMode"];
-    $tld = $params["tld"];
-    $sld = $params["sld"];
-    # Put your code to get email forwarding here - the result should be an array of prefixes and forward to emails (max 10)
-    foreach ($result as $value) {
-        $values[$counter]["prefix"] = $value["prefix"];
-        $values[$counter]["forwardto"] = $value["forwardto"];
-    }
-    return $values;
+
 }
 
 function papaki_SaveEmailForwarding($params)
 { //den uposthrizetai apo to Api
-    $username = '';
-    $password = '';
-    $testmode = $params["TestMode"];
-    $tld = $params["tld"];
-    $sld = $params["sld"];
-    foreach ($params["prefix"] as $key => $value) {
-        $forwardarray[$key]["prefix"] = $params["prefix"][$key];
-        $forwardarray[$key]["forwardto"] = $params["forwardto"][$key];
-    }
-    # Put your code to save email forwarders here
+
+
 }
 
 function papaki_GetDNS($params)
-{
+{//den uposthrizetai apo to Api
 
-    $username = '';
-    $password = '';
-    $apikey = $params["APIkey"];
-    $posturl = $params["PostUrl"];
-    $testmode = $params["TestMode"];
-    $tld = $params["tld"];
-    $sld = $params["sld"];
-    # Put your code here to get the current DNS settings - the result should be an array of hostname, record type, and address
-    ########################
 
-    #####################################
-
-    $hostrecords = array();
-    $hostrecords[] = array("hostname" => $ns1, "type" => "A", "address" => $ip1);
-    $hostrecords[] = array("hostname" => $ns2, "type" => "A", "address" => $ip2);
-    $hostrecords[] = array("hostname" => $ns3, "type" => "A", "address" => $ip3);
-    $hostrecords[] = array("hostname" => $ns4, "type" => "A", "address" => $ip4);
-    //$hostrecords[] = array( "hostname" => "ns1", "type" => "A", "address" => "192.168.0.1", );
-    // $hostrecords[] = array( "hostname" => "ns2", "type" => "A", "address" => "192.168.0.2", );
-    return $hostrecords;
 }
 
 function papaki_SaveDNS($params)
-{
-    $username = '';
-    $password = '';
-    $apikey = $params["APIkey"];
-    $posturl = $params["PostUrl"];
-    $testmode = $params["TestMode"];
-    $tld = $params["tld"];
-    $sld = $params["sld"];
-    # Loop through the submitted records
-    foreach ($params["dnsrecords"] as $key => $values) {
-        $hostname = $values["hostname"];
-        $type = $values["type"];
-        $address = $values["address"];
-        # Add your code to update the record here
-    }
-    # If error, return the error message in the value below
-    $values["error"] = $Enom->Values["Err1"];
-    return $values;
+{//den uposthrizetai apo to Api
+
+
 }
 
 function papaki_registerdomain($params)
 {
 
+    $values = array();
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-    $sql = "select * from tbldomains,tblorders  where tbldomains.orderid=tblorders.id    and   tbldomains.id=" . $params["domainid"] . "";
 
-    $result = mysql_query($sql);
-    while ($row = mysql_fetch_array($result)) {
-        if ($row{'contactid'} == "0") {
-            $sql2 = "select * from tblclients where id=" . $row{'userid'} . "";
-            $result2 = mysql_query($sql2);
-            while ($row2 = mysql_fetch_array($result2)) {
+    //Find contactDetails
+    $results = Capsule::table('tbldomains')
+        ->join('tblorders', 'tbldomains.orderid', '=', 'tblorders.id')
+        ->where('tbldomains.id', '=', $params["domainid"])
+        ->select('tblorders.contactid', 'tbldomains.userid')
+        ->get();
 
-                $params["companyname"] = $row2{'companyname'};
-                $params["firstname"] = $row2{'firstname'};
-                $params["lastname"] = $row2{'lastname'};
-                $params["address1"] = $row2{'address1'};
-                $params["address2"] = $row2{'address2'};
-                $params["city"] = $row2{'city'};
-                $params["state"] = $row2{'state'};
-                $params["postcode"] = $row2{'postcode'};
-                $params["country"] = $row2{'country'};
-                $params["email"] = $row2{'email'};
-                $params["phonenumber"] = $row2{'phonenumber'};
-            }
+    foreach ($results as $row) {
+
+
+        if ($row->contactid > 0) {
+            $contactarray = Capsule::table('tblcontacts')->where('id', '=', $row->contactid)->select('companyname',
+                'firstname', 'lastname', 'address1', 'address2', 'city', 'state', 'postcode', 'country', 'email',
+                'phonenumber')->get();
         } else {
-            $sql3 = "select * from tbldomains,tblorders,tblcontacts where tbldomains.orderid=tblorders.id  and tblorders.contactid=tblcontacts.id and   tbldomains.id=" . $params["domainid"] . "";
-            $result3 = mysql_query($sql3);
-//fetch tha data from the database
-            while ($row3 = mysql_fetch_array($result3)) {
-                $params["companyname"] = $row3{'companyname'};
-                $params["firstname"] = $row3{'firstname'};
-                $params["lastname"] = $row3{'lastname'};
-                $params["address1"] = $row3{'address1'};
-                $params["address2"] = $row3{'address2'};
-                $params["city"] = $row3{'city'};
-                $params["state"] = $row3{'state'};
-                $params["postcode"] = $row3{'postcode'};
-                $params["country"] = $row3{'country'};
-                $params["email"] = $row3{'email'};
-                $params["phonenumber"] = $row3{'phonenumber'};
-            }
+            $contactarray = Capsule::table('tblclients')->where('id', '=', $row->userid)->select('companyname',
+                'firstname', 'lastname', 'address1', 'address2', 'city', 'state', 'postcode', 'country', 'email',
+                'phonenumber')->get();
+
 
         }
 
+        $params["companyname"] = $contactarray['0']->companyname;
+        $params["firstname"] = $contactarray['0']->firstname;
+        $params["lastname"] = $contactarray['0']->lastname;
+        $params["address1"] = $contactarray['0']->address1;
+        $params["address2"] = $contactarray['0']->address2;
+        $params["city"] = $contactarray['0']->city;
+        $params["state"] = $contactarray['0']->state;
+        $params["postcode"] = $contactarray['0']->postcode;
+        $params["country"] = $contactarray['0']->country;
+        $params["email"] = $contactarray['0']->email;
+        $params["phonenumber"] = $contactarray['0']->phonenumber;
     }
 
+
 /////////////////////////////////////////////////////////////
+
 
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $description_ar = $params["additionalfields"];
     $description = encodetolatin($description_ar["Description"]);
     if (trim($description) == '') {
         $description = ' ';
     }
+
 
     //extra attributes
     $LegalType = encodetolatin($description_ar["Legal Type"]);
@@ -446,59 +423,15 @@ function papaki_registerdomain($params)
 
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
-    $regperiod = $params["regperiod"];
-    $nameserver1 = encodetolatin($params["ns1"]);
-    $nameserver2 = encodetolatin($params["ns2"]);
-    $nameserver3 = encodetolatin($params["ns3"]);
-    $nameserver4 = encodetolatin($params["ns4"]);
+
     $idprotection = encodetolatin($params["idprotection"]);
     if ($idprotection == "1") {
         $idprotection = "true";
     } else {
         $idprotection = "false";
     }
-    if (trim($nameserver1) == '') {
-        $nameserver1 = ' ';
-    }
 
-    if (trim($nameserver2) == '') {
-        $nameserver2 = ' ';
-    }
-
-    if (trim($nameserver3) == '') {
-        $nameserver3 = ' ';
-    }
-
-    if (trim($nameserver4) == '') {
-        $nameserver4 = ' ';
-    }
-
-    $params["phonenumber"] = strtr($params["phonenumber"], array(" " => ""));
-    $params["adminphonenumber"] = strtr($params["adminphonenumber"], array(" " => ""));
-    # Registrant Details
-    $RegistrantFirstName = encodetolatin($params["firstname"]);
-    $RegistrantLastName = encodetolatin($params["lastname"]);
-    $RegistrantAddress1 = encodetolatin($params["address1"]);
-    $RegistrantAddress2 = encodetolatin($params["address2"]);
-    $RegistrantCity = encodetolatin($params["city"]);
-    $RegistrantStateProvince = encodetolatin($params["state"]);
-    $RegistrantPostalCode = encodetolatin($params["postcode"]);
-    $RegistrantCountry = encodetolatin($params["country"]);
-    $RegistrantEmailAddress = encodetolatin($params["email"]);
-    $RegistrantPhone = encodetolatin($params["phonenumber"]);
-    # Admin Details
-    $AdminFirstName = encodetolatin($params["adminfirstname"]);
-    $AdminLastName = encodetolatin($params["adminlastname"]);
-    $AdminAddress1 = encodetolatin($params["adminaddress1"]);
-    $AdminAddress2 = encodetolatin($params["adminaddress2"]);
-    $AdminCity = encodetolatin($params["admincity"]);
-    $AdminStateProvince = encodetolatin($params["adminstate"]);
-    $AdminPostalCode = encodetolatin($params["adminpostcode"]);
-    $AdminCountry = encodetolatin($params["admincountry"]);
-    $AdminEmailAddress = encodetolatin($params["adminemail"]);
-    $AdminPhone = encodetolatin($params["adminphonenumber"]);
-    # Put your code to register domain here
-    # If error, return the error message in the value below
+    $params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
 
     if (!(startswith($params["phonenumber"], "+")) and !(startswith($params["phonenumber"], "00"))) {
         $params["phonenumber"] = '+30.' . $params["phonenumber"];
@@ -506,19 +439,57 @@ function papaki_registerdomain($params)
     }
 
     $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'domainregister', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "description" => $description, "ip1" => ' ', "ip2" => ' ', "ip3" => ' ', "ip4" => ' ', "ns1" => encodetolatin($params["ns1"]), "ns2" => encodetolatin($params["ns2"]), "ns3" => encodetolatin($params["ns3"]), "ns4" => encodetolatin($params["ns4"]), "owner_fullname" => encodetolatin($params["companyname"]), "owner_firstname" => encodetolatin($params["firstname"]), "owner_lastname" => encodetolatin($params["lastname"]), "owner_email" => encodetolatin($params["email"]), "owner_address" => encodetolatin($params["address1"]), "owner_state" => encodetolatin($params["state"]), "owner_city" => encodetolatin($params["city"]), "owner_postcode" => encodetolatin($params["postcode"]), "owner_country" => encodetolatin($params["country"]), "owner_phone" => encodetolatin($params["phonenumber"]), "owner_fax" => '+30.2', "owner_litepsd" => ' ', "owner_title" => ' ', "regperiod" => $params["regperiod"], "idprotect" => $idprotection, "customer_language" => "gr", "extraattributes" => array("entity_type" => $LegalType, "nationality_code" => $extra_country, "reg_code" => $tax_id)));
+    $jsonarray = array(
+        "request" => array(
+            "do" => 'domainregister',
+            "username" => $username,
+            "password" => $password,
+            "apiKey" => $apikey,
+            "domainname" => $sld . "." . $tld,
+            "description" => $description,
+            "ip1" => ' ',
+            "ip2" => ' ',
+            "ip3" => ' ',
+            "ip4" => ' ',
+            "ns1" => encodetolatin($params["ns1"]),
+            "ns2" => encodetolatin($params["ns2"]),
+            "ns3" => encodetolatin($params["ns3"]),
+            "ns4" => encodetolatin($params["ns4"]),
+            "owner_fullname" => encodetolatin($params["companyname"]),
+            "owner_firstname" => encodetolatin($params["firstname"]),
+            "owner_lastname" => encodetolatin($params["lastname"]),
+            "owner_email" => encodetolatin($params["email"]),
+            "owner_address" => encodetolatin($params["address1"]),
+            "owner_state" => encodetolatin($params["state"]),
+            "owner_city" => encodetolatin($params["city"]),
+            "owner_postcode" => encodetolatin($params["postcode"]),
+            "owner_country" => encodetolatin($params["country"]),
+            "owner_phone" => encodetolatin($params["phonenumber"]),
+            "owner_fax" => '+30.2',
+            "owner_litepsd" => ' ',
+            "owner_title" => ' ',
+            "regperiod" => $params["regperiod"],
+            "idprotect" => $idprotection,
+            "customer_language" => "gr",
+            "extraattributes" => array(
+                "entity_type" => $LegalType,
+				"nationality_code" => $extra_country,
+				"reg_code" => $tax_id
+            )
+        )
+    );
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
-
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
+
 
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
     $message = $responsearray->response->message;
+
 
     if ($codeNode != "1000") {
 
@@ -531,64 +502,57 @@ function papaki_registerdomain($params)
 function papaki_TransferDomain($params)
 {
 
+    $values = array();
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-    $sql = "select * from tbldomains,tblorders  where tbldomains.orderid=tblorders.id    and   tbldomains.id=" . $params["domainid"] . "";
 
-    $result = mysql_query($sql);
-    while ($row = mysql_fetch_array($result)) {
-        if ($row{'contactid'} == "0") {
-            $sql2 = "select * from tblclients where id=" . $row{'userid'} . "";
-            $result2 = mysql_query($sql2);
-            while ($row2 = mysql_fetch_array($result2)) {
+    //Find contactDetails
+    $results = Capsule::table('tbldomains')
+        ->join('tblorders', 'tbldomains.orderid', '=', 'tblorders.id')
+        ->where('tbldomains.id', '=', $params["domainid"])
+        ->select('tblorders.contactid', 'tbldomains.userid')
+        ->get();
 
-                $params["companyname"] = $row2{'companyname'};
-                $params["firstname"] = $row2{'firstname'};
-                $params["lastname"] = $row2{'lastname'};
-                $params["address1"] = $row2{'address1'};
-                $params["address2"] = $row2{'address2'};
-                $params["city"] = $row2{'city'};
-                $params["state"] = $row2{'state'};
-                $params["postcode"] = $row2{'postcode'};
-                $params["country"] = $row2{'country'};
-                $params["email"] = $row2{'email'};
-                $params["phonenumber"] = $row2{'phonenumber'};
-            }
+    foreach ($results as $row) {
+
+
+        if ($row->contactid > 0) {
+            $contactarray = Capsule::table('tblcontacts')->where('id', '=', $row->contactid)->select('companyname',
+                'firstname', 'lastname', 'address1', 'address2', 'city', 'state', 'postcode', 'country', 'email',
+                'phonenumber')->get();
         } else {
-            $sql3 = "select * from tbldomains,tblorders,tblcontacts where tbldomains.orderid=tblorders.id  and tblorders.contactid=tblcontacts.id and   tbldomains.id=" . $params["domainid"] . "";
-            $result3 = mysql_query($sql3);
-//fetch tha data from the database
-            while ($row3 = mysql_fetch_array($result3)) {
-                $params["companyname"] = $row3{'companyname'};
-                $params["firstname"] = $row3{'firstname'};
-                $params["lastname"] = $row3{'lastname'};
-                $params["address1"] = $row3{'address1'};
-                $params["address2"] = $row3{'address2'};
-                $params["city"] = $row3{'city'};
-                $params["state"] = $row3{'state'};
-                $params["postcode"] = $row3{'postcode'};
-                $params["country"] = $row3{'country'};
-                $params["email"] = $row3{'email'};
-                $params["phonenumber"] = $row3{'phonenumber'};
-            }
+            $contactarray = Capsule::table('tblclients')->where('id', '=', $row->userid)->select('companyname',
+                'firstname', 'lastname', 'address1', 'address2', 'city', 'state', 'postcode', 'country', 'email',
+                'phonenumber')->get();
+
 
         }
-
+        $params["companyname"] = $contactarray{'companyname'};
+        $params["firstname"] = $contactarray{'firstname'};
+        $params["lastname"] = $contactarray{'lastname'};
+        $params["address1"] = $contactarray{'address1'};
+        $params["address2"] = $contactarray{'address2'};
+        $params["city"] = $contactarray{'city'};
+        $params["state"] = $contactarray{'state'};
+        $params["postcode"] = $contactarray{'postcode'};
+        $params["country"] = $contactarray{'country'};
+        $params["email"] = $contactarray{'email'};
+        $params["phonenumber"] = $contactarray{'phonenumber'};
     }
 
+
 /////////////////////////////////////////////////////////////
-    $params["phonenumber"] = strtr($params["phonenumber"], array(" " => ""));
-    $params["adminphonenumber"] = strtr($params["adminphonenumber"], array(" " => ""));
+
 
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
-    $regperiod = encodetolatin($params["regperiod"]);
     $transfersecret = encodetolatin($params["transfersecret"]);
+
 
     if (trim($transfersecret) == "") {
         $transfersecret = encodetolatin($_POST["eppcode"]);
@@ -596,6 +560,7 @@ function papaki_TransferDomain($params)
     if (trim($transfersecret) == "") {
         $transfersecret = encodetolatin($_SESSION["eppcode"]);
     }
+
 
     if (trim($transfersecret) == "") {
 
@@ -606,16 +571,16 @@ function papaki_TransferDomain($params)
             }
         }
 
+
     }
 
-    $nameserver1 = encodetolatin($params["ns1"]);
-    $nameserver2 = encodetolatin($params["ns2"]);
+    $params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
+
     # Registrant Details
     $RegistrantFullName = encodetolatin($params["companyname"]);
     $RegistrantFirstName = encodetolatin($params["firstname"]);
     $RegistrantLastName = encodetolatin($params["lastname"]);
     $RegistrantAddress1 = encodetolatin($params["address1"]);
-    $RegistrantAddress2 = encodetolatin($params["address2"]);
     $RegistrantCity = encodetolatin($params["city"]);
     $RegistrantStateProvince = encodetolatin($params["state"]);
     $RegistrantPostalCode = encodetolatin($params["postcode"]);
@@ -625,43 +590,63 @@ function papaki_TransferDomain($params)
     if (!(startswith($RegistrantPhone, "+")) and !(startswith($RegistrantPhone, "00"))) {
         $RegistrantPhone = '+30.' . $RegistrantPhone;
 
-    }
-    # Admin Details
-    $AdminFirstName = encodetolatin($params["adminfirstname"]);
-    $AdminLastName = encodetolatin($params["adminlastname"]);
-    $AdminAddress1 = encodetolatin($params["adminaddress1"]);
-    $AdminAddress2 = encodetolatin($params["adminaddress2"]);
-    $AdminCity = encodetolatin($params["admincity"]);
-    $AdminStateProvince = encodetolatin($params["adminstate"]);
-    $AdminPostalCode = encodetolatin($params["adminpostcode"]);
-    $AdminCountry = encodetolatin($params["admincountry"]);
-    $AdminEmailAddress = encodetolatin($params["adminemail"]);
-    $AdminPhone = encodetolatin($params["adminphonenumber"]);
-    if (!(startswith($AdminPhone, "+")) and !(startswith($AdminPhone, "00"))) {
-        $AdminPhone = '+30.' . $AdminPhone;
 
     }
-    // $transfersecret=urlencode( $transfersecret);
+
 
     $json = new Services_JSON();
 
-    if (!isgrdomain($sld . "." . $tld)) {
-        $jsonarray = array("request" => array("do" => 'changeregistrar', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "customer_language" => 'gr', "authcode" => $transfersecret, "RegistrantContact" => array("firstname" => $RegistrantFirstName, "lastname" => $RegistrantLastName, "fullname" => $RegistrantFullName, "email" => $RegistrantEmailAddress, "address" => $RegistrantAddress1, "state" => $RegistrantStateProvince, "city" => $RegistrantCity, "postcode" => $RegistrantPostalCode, "country" => $RegistrantCountry, "phone" => $RegistrantPhone, "fax" => "", "title" => '')));
+    if (!isgrdomain($sld . "." . $tld) ) {
+        $jsonarray = array(
+            "request" => array(
+                "do" => 'changeregistrar',
+                "username" => $username,
+                "password" => $password,
+                "apiKey" => $apikey,
+                "domainname" => $sld . "." . $tld,
+                "customer_language" => 'gr',
+                "authcode" => $transfersecret,
+                "RegistrantContact" => array(
+                    "firstname" => $RegistrantFirstName,
+                    "lastname" => $RegistrantLastName,
+                    "fullname" => $RegistrantFullName,
+                    "email" => $RegistrantEmailAddress,
+                    "address" => $RegistrantAddress1,
+                    "state" => $RegistrantStateProvince,
+                    "city" => $RegistrantCity,
+                    "postcode" => $RegistrantPostalCode,
+                    "country" => $RegistrantCountry,
+                    "phone" => $RegistrantPhone,
+                    "fax" => "",
+                    "title" => ''
+                )
+            )
+        );
     } else {
-        $jsonarray = array("request" => array("do" => 'changeregistrar', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "customer_language" => 'gr', "authcode" => $transfersecret));
+        $jsonarray = array(
+            "request" => array(
+                "do" => 'changeregistrar',
+                "username" => $username,
+                "password" => $password,
+                "apiKey" => $apikey,
+                "domainname" => $sld . "." . $tld,
+                "customer_language" => 'gr',
+                "authcode" => $transfersecret
+            )
+        );
 
     }
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
     $message = $responsearray->response->message;
+
 
     if ($codeNode != "1000") {
         $values["error"] = 'Error: ' . $codeNode . ' - ' . $message;
@@ -672,11 +657,10 @@ function papaki_TransferDomain($params)
 
 function papaki_RenewDomain($params)
 {
+    $values = array();
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
     $regperiod = $params["regperiod"];
@@ -691,18 +675,27 @@ function papaki_RenewDomain($params)
         $params["check24hours"] = "True";
     }
 
-    # Put your code to renew domain here
-    # If error, return the error message in the value below
 
     $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'domainupdate', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "customer_language" => 'gr', "regperiod" => $regperiod, "idprotect" => $idprotection, "check24hours" => $params["check24hours"]));
+    $jsonarray = array(
+        "request" => array(
+            "do" => 'domainupdate',
+            "username" => $username,
+            "password" => $password,
+            "apiKey" => $apikey,
+            "domainname" => $sld . "." . $tld,
+            "customer_language" => 'gr',
+            "regperiod" => $regperiod,
+            "idprotect" => $idprotection,
+            "check24hours" => $params["check24hours"]
+        )
+    );
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
 
     $responsearray = $json->decode($pageContents);
@@ -710,6 +703,7 @@ function papaki_RenewDomain($params)
     $codeNode = $responsearray->response->code;
 
     $message = $responsearray->response->message;
+
 
     if ($codeNode != "1000") {
         $values["error"] = 'Error: ' . $codeNode . ' - ' . $message;
@@ -719,33 +713,40 @@ function papaki_RenewDomain($params)
 
 }
 
+
 function papaki_GetContactDetails($params)
 {
+
+    $values = array();
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
-    # Put your code to get WHOIS data here
-    # Data should be returned in an array as follows
 
-    ########################
     $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'getcontactdetails', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld));
+    $jsonarray = array(
+        "request" => array(
+            "do" => 'getcontactdetails',
+            "username" => $username,
+            "password" => $password,
+            "apiKey" => $apikey,
+            "domainname" => $sld . "." . $tld
+        )
+    );
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
+
 
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
     $message = $responsearray->response->message;
+
 
     $firstname = $responsearray->response->registrantFirstName;
     $LastName = $responsearray->response->registrantLastname;
@@ -775,6 +776,7 @@ function papaki_GetContactDetails($params)
     $AdminPhone = $responsearray->response->adminphone;
     $AdminFax = $responsearray->response->adminfax;
 
+
     $Techfirstname = $responsearray->response->techFirstName;
     $TechLastName = $responsearray->response->techLastname;
     $TechOrganizationName = $responsearray->response->techFullname;
@@ -788,6 +790,7 @@ function papaki_GetContactDetails($params)
     $TechCountry = $responsearray->response->techcountry;
     $TechPhone = $responsearray->response->techphone;
     $TechFax = $responsearray->response->techfax;
+
 
     if ($codeNode != "1000") {
 
@@ -810,6 +813,7 @@ function papaki_GetContactDetails($params)
     $values["Registrant"]['Phone'] = $Phone;
     $values["Registrant"]['Fax'] = $Fax;
 
+
     $values["Admin"]['First Name'] = $Adminfirstname;
     $values["Admin"]['Last Name'] = $AdminLastName;
     $values["Admin"]['Organisation Name'] = $AdminOrganizationName;
@@ -823,6 +827,7 @@ function papaki_GetContactDetails($params)
     $values["Admin"]['Country'] = $AdminCountry;
     $values["Admin"]['Phone'] = $AdminPhone;
     $values["Admin"]['Fax'] = $AdminFax;
+
 
     $values["Tech"]['First Name'] = $Techfirstname;
     $values["Tech"]['Last Name'] = $TechLastName;
@@ -838,28 +843,19 @@ function papaki_GetContactDetails($params)
     $values["Tech"]['Phone'] = $TechPhone;
     $values["Tech"]['Fax'] = $TechFax;
 
-    #####################################
-
-    //$values["Registrant"]["First Name"] = $firstname;
-    //$values["Registrant"]["Last Name"] = $lastname;
-    //$values["Admin"]["First Name"] = $adminfirstname;
-    //$values["Admin"]["Last Name"] = $adminlastname;
-    //$values["Tech"]["First Name"] = $techfirstname;
-    //$values["Tech"]["Last Name"] = $techlastname;
 
     return $values;
 }
 
 function papaki_SaveContactDetails($params)
 {
+    $values = array();
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
-    # Data is returned as specified in the GetContactDetails() function
+
 
     $firstname = encodetolatin($_POST['contactdetails']["Registrant"]['First Name']);
     $lastname = encodetolatin($_POST['contactdetails']["Registrant"]['Last Name']);
@@ -914,181 +910,182 @@ function papaki_SaveContactDetails($params)
         $TechFax = "";
     }
 
+
     if (trim($EmailAddress) == '') {
         $EmailAddress = ' ';
     }
-
     if (trim($Address1) == '') {
         $Address1 = ' ';
     }
-
     if (trim($Address2) == '') {
         $Address2 = ' ';
     }
-
     if (trim($City) == '') {
         $City = ' ';
     }
-
     if (trim($StateProvince) == '') {
         $StateProvince = ' ';
     }
-
     if (trim($PostalCode) == '') {
         $PostalCode = ' ';
     }
-
     if (trim($Country) == '') {
         $Country = ' ';
     }
-
     if (trim($Phone) == '') {
         $Phone = ' ';
     }
-
     if (trim($Fax) == '') {
         $Fax = ' ';
     }
-
     if (trim($AdminEmailAddress) == '') {
         $AdminEmailAddress = ' ';
     }
-
     if (trim($AdminAddress1) == '') {
         $AdminAddress1 = ' ';
     }
-
     if (trim($AdminAddress2) == '') {
         $AdminAddress2 = ' ';
     }
-
     if (trim($AdminCity) == '') {
         $AdminCity = ' ';
     }
-
     if (trim($AdminStateProvince) == '') {
         $AdminStateProvince = ' ';
     }
-
     if (trim($AdminPostalCode) == '') {
         $AdminPostalCode = ' ';
     }
-
     if (trim($AdminCountry) == '') {
         $AdminCountry = ' ';
     }
-
     if (trim($AdminPhone) == '') {
         $AdminPhone = ' ';
     }
-
     if (trim($AdminFax) == '') {
         $AdminFax = ' ';
     }
-
     if (trim($TechEmailAddress) == '') {
         $TechEmailAddress = ' ';
     }
-
     if (trim($TechAddress1) == '') {
         $TechAddress1 = ' ';
     }
-
     if (trim($TechAddress2) == '') {
         $TechAddress2 = ' ';
     }
-
     if (trim($TechCity) == '') {
         $TechCity = ' ';
     }
-
     if (trim($TechStateProvince) == '') {
         $TechStateProvince = ' ';
     }
-
     if (trim($TechPostalCode) == '') {
         $TechPostalCode = ' ';
     }
-
     if (trim($TechCountry) == '') {
         $TechCountry = ' ';
     }
-
     if (trim($TechPhone) == '') {
         $TechPhone = ' ';
     }
-
     if (trim($TechFax) == '') {
         $TechFax = ' ';
     }
-
     if (trim($firstname) == '') {
         $firstname = ' ';
     }
-
     if (trim($adminfirstname) == '') {
         $adminfirstname = ' ';
     }
-
     if (trim($techfirstname) == '') {
         $techfirstname = ' ';
     }
-
     if (trim($lastname) == '') {
         $lastname = ' ';
     }
-
     if (trim($adminlastname) == '') {
         $adminlastname = ' ';
     }
-
     if (trim($techlastname) == '') {
         $techlastname = ' ';
     }
-
     if (trim($fullname) == '') {
         $fullname = ' ';
     }
-
     if (trim($adminfullname) == '') {
         $adminfullname = ' ';
     }
-
     if (trim($techfullname) == '') {
         $techfullname = ' ';
     }
 
-    //$adminfirstname = $params["contactdetails"]["Admin"]["First Name"];
-    //    $adminlastname = $params["contactdetails"]["Admin"]["Last Name"];
-    //    $techfirstname = $params["contactdetails"]["Tech"]["First Name"];
-    //    $techlastname = $params["contactdetails"]["Tech"]["Last Name"];
-    # Put your code to save new WHOIS data here
+
     ########################
+
 
     if (isgrdomain($sld . "." . $tld) or iseudomain($sld . "." . $tld)) {
         $fullname = ' ';
-        //$techfullname=' ';
-        //$adminfullname=' ';
         $firstname = ' ';
-        //$techfirstname=' ';
-        //    $adminfirstname=' ';
         $lastname = ' ';
-        //    $techlastname=' ';
-        //    $adminlastname=' ';
+
     }
 
     $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'savecontactdetails', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "firstname" => $firstname, "lastname" => $lastname, "fullname" => $fullname, "emailaddress" => $EmailAddress, "address1" => $Address1, "address2" => $Address2, "city" => $City, "stateprovince" => $StateProvince, "postalcode" => $PostalCode, "country" => $Country, "phone" => $Phone, "fax" => $Fax, "adminfirstname" => $adminfirstname, "adminlastname" => $adminlastname, "adminfullname" => $adminfullname, "adminemailaddress" => $AdminEmailAddress, "adminaddress1" => $AdminAddress1, "adminaddress2" => $AdminAddress2, "admincity" => $AdminCity, "adminstateprovince" => $AdminStateProvince, "adminpostalcode" => $AdminPostalCode, "admincountry" => $AdminCountry, "adminphone" => $AdminPhone, "adminfax" => $AdminFax, "techfirstname" => $techfirstname, "techlastname" => $techlastname, "techfullname" => $techfullname, "techemailaddress" => $TechEmailAddress, "techaddress1" => $TechAddress1, "techaddress2" => $TechAddress2, "techcity" => $TechCity, "techstateprovince" => $TechStateProvince, "techpostalcode" => $TechPostalCode, "techcountry" => $TechCountry, "techphone" => $TechPhone, "techfax" => $TechFax));
+    $jsonarray = array(
+        "request" => array(
+            "do" => 'savecontactdetails',
+            "username" => $username,
+            "password" => $password,
+            "apiKey" => $apikey,
+            "domainname" => $sld . "." . $tld,
+            "firstname" => $firstname,
+            "lastname" => $lastname,
+            "fullname" => $fullname,
+            "emailaddress" => $EmailAddress,
+            "address1" => $Address1,
+            "address2" => $Address2,
+            "city" => $City,
+            "stateprovince" => $StateProvince,
+            "postalcode" => $PostalCode,
+            "country" => $Country,
+            "phone" => $Phone,
+            "fax" => $Fax,
+            "adminfirstname" => $adminfirstname,
+            "adminlastname" => $adminlastname,
+            "adminfullname" => $adminfullname,
+            "adminemailaddress" => $AdminEmailAddress,
+            "adminaddress1" => $AdminAddress1,
+            "adminaddress2" => $AdminAddress2,
+            "admincity" => $AdminCity,
+            "adminstateprovince" => $AdminStateProvince,
+            "adminpostalcode" => $AdminPostalCode,
+            "admincountry" => $AdminCountry,
+            "adminphone" => $AdminPhone,
+            "adminfax" => $AdminFax,
+            "techfirstname" => $techfirstname,
+            "techlastname" => $techlastname,
+            "techfullname" => $techfullname,
+            "techemailaddress" => $TechEmailAddress,
+            "techaddress1" => $TechAddress1,
+            "techaddress2" => $TechAddress2,
+            "techcity" => $TechCity,
+            "techstateprovince" => $TechStateProvince,
+            "techpostalcode" => $TechPostalCode,
+            "techcountry" => $TechCountry,
+            "techphone" => $TechPhone,
+            "techfax" => $TechFax
+        )
+    );
 
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
     $Xpost = str_replace("\n", "", $Xpost);
     $Xpost = str_replace("&", urlencode("&"), $Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
@@ -1098,217 +1095,238 @@ function papaki_SaveContactDetails($params)
     }
     $message = $responsearray->response->message;
 
+
     if ($codeNode != "1000") {
 
         $values["error"] = 'Error: ' . $codeNode . ' - ' . $message;
     }
 
-    #####################################
 
-    # If error, return the error message in the value below
-    //$values["error"] = $error;
     return $values;
 }
 
 function papaki_GetEPPCode($params)
 {
+
+    $values = array();
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
-    # Put your code to request the EPP code here - if the API returns it, pass back as below - otherwise return no value and it will assume code is emailed
-    ########################
+
 
     $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'getauthocode', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld));
+    $jsonarray = array(
+        "request" => array(
+            "do" => 'getauthocode',
+            "username" => $username,
+            "password" => $password,
+            "apiKey" => $apikey,
+            "domainname" => $sld . "." . $tld
+        )
+    );
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
+
 
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
     $message = $responsearray->response->message;
 
+
     $eppcode = $responsearray->response->eppcode;
+
 
     if ($codeNode != "1000") {
 
         $values["error"] = 'Error: ' . $codeNode . ' - ' . $message;
     }
 
-    #####################################
 
     $values["eppcode"] = $eppcode;
-    # If error, return the error message in the value below
-    // $values["error"] = $error;
+
     return $values;
 }
 
 function papaki_RegisterNameserver($params)
 {
+    $values = array();
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
     $nameserver = encodetolatin($params["nameserver"]);
     $ipaddress = encodetolatin($params["ipaddress"]);
-    # Put your code to register the nameserver here
 
-    ########################
+
     $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'registerns', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "ns" => $nameserver, "ip" => $ipaddress));
+    $jsonarray = array(
+        "request" => array(
+            "do" => 'registerns',
+            "username" => $username,
+            "password" => $password,
+            "apiKey" => $apikey,
+            "domainname" => $sld . "." . $tld,
+            "ns" => $nameserver,
+            "ip" => $ipaddress
+        )
+    );
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
+
 
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
     $message = $responsearray->response->message;
+
 
     if ($codeNode != "1000") {
 
         $values["error"] = 'Error: ' . $codeNode . ' - ' . $message;
     }
 
-    #####################################
 
-    # If error, return the error message in the value below
-    // $values["error"] = $error;
     return $values;
 }
 
 function papaki_ModifyNameserver($params)
 {
+    $values = array();
     $username = '';
     $password = '';
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
     $nameserver = encodetolatin($params["nameserver"]);
     $currentipaddress = encodetolatin($params["currentipaddress"]);
     $newipaddress = encodetolatin($params["newipaddress"]);
-    # Put your code to update the nameserver here
-    ########################
+
 
     $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'modifyns', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "ns" => $nameserver, "oldip" => $currentipaddress, "newip" => $newipaddress));
+    $jsonarray = array(
+        "request" => array(
+            "do" => 'modifyns',
+            "username" => $username,
+            "password" => $password,
+            "apiKey" => $apikey,
+            "domainname" => $sld . "." . $tld,
+            "ns" => $nameserver,
+            "oldip" => $currentipaddress,
+            "newip" => $newipaddress
+        )
+    );
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
 
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
     $message = $responsearray->response->message;
+
 
     if ($codeNode != "1000") {
 
         $values["error"] = 'Error: ' . $codeNode . ' - ' . $message;
     }
 
-    #####################################
-    # If error, return the error message in the value below
-    //$values["error"] = $error;
+
     return $values;
 }
 
 function papaki_DeleteNameserver($params)
 {
-    $username = '';
-    $password = '';
-    $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
-    $tld = encodetolatin($params["tld"]);
-    $sld = encodetolatin($params["sld"]);
-    $nameserver = encodetolatin($params["nameserver"]);
-    # Put your code to delete the nameserver here
-    ########################
+    $values = array();
+//    $username = '';
+//    $password = '';
+//    $apikey = encodetolatin($params["APIkey"]);
+//    $tld = encodetolatin($params["tld"]);
+//    $sld = encodetolatin($params["sld"]);
+//    $nameserver = encodetolatin($params["nameserver"]);
+//
+//
+//    $json = new Services_JSON();
+//    $jsonarray = array(
+//        "request" => array(
+//            "do" => 'deletens',
+//            "username" => $username,
+//            "password" => $password,
+//            "apiKey" => $apikey,
+//            "domainname" => $sld . "." . $tld,
+//            "ns" => $nameserver
+//        )
+//    );
+//    $Xpost = $json->encode($jsonarray);
+//    $Xpost = latintogreek($Xpost);
+//
+//
+//    $pageContents = HttpClient::quickPost($params["PostUrl"], array(
+//        'message' => $Xpost
+//    ));
+//    $responsearray = $json->decode($pageContents);
+//    $codeNode = $responsearray->response->code;
+//    $message = $responsearray->response->message;
 
-    $json = new Services_JSON();
-    $jsonarray = array("request" => array("do" => 'deletens', "username" => $username, "password" => $password, "apiKey" => $apikey, "domainname" => $sld . "." . $tld, "ns" => $nameserver));
-    $Xpost = $json->encode($jsonarray);
-    $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
-
-    $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
-    ));
-    $responsearray = $json->decode($pageContents);
-    $codeNode = $responsearray->response->code;
-    $message = $responsearray->response->message;
-
-    // if ($codeNode!="1000" ){
-
-    // $values["error"]='Error: ' .  $codeNode . ' - ' .  $message;
-    //}
     $values["error"] = 'Error: Not Supported';
-    #####################################
-    # If error, return the error message in the value below
-    //  $values["error"] = $error;
+
     return $values;
 }
 
+
 function papaki_Sync($params)
 {
+    $values = array();
 
     //3 seconds delay 3000000
     usleep(3000000);
 
+
 # Other parameters used in your _getConfigArray() function would also be available for use in this function
+
 
 # Put your code to check on the domain status here
 
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $domain = encodetolatin($params["domain"]);
 
 # Other parameters used in your _getConfigArray() function would also be available for use in this function
 
 # Put your code to check on the domain transfer status here
 
+
     $json = new Services_JSON();
     $jsonarray = array("request" => array("do" => 'getDomainInfo', "apiKey" => $apikey, "domainname" => $domain));
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
     $message = $responsearray->response->message;
 
-    $values = array();
 
     if ($codeNode == "1000") {
         $expirydate = $responsearray->response->expirationDate;
+
 
         if ($expirydate != "") {
             $values['expirydate'] = $expirydate;
@@ -1319,44 +1337,48 @@ function papaki_Sync($params)
 
     }
 
+
     return $values; # return the details of the sync
 
 }
 
+
 function papaki_TransferSync($params)
 {
+    $values = array();
     // wait for 2 seconds
     usleep(3000000);
 
+
     $apikey = encodetolatin($params["APIkey"]);
-    $posturl = encodetolatin($params["PostUrl"]);
-    $testmode = encodetolatin($params["TestMode"]);
     $domain = encodetolatin($params["domain"]);
 
 # Other parameters used in your _getConfigArray() function would also be available for use in this function
 
 # Put your code to check on the domain transfer status here
 
+
     $json = new Services_JSON();
     $jsonarray = array("request" => array("do" => 'getDomainInfo', "apiKey" => $apikey, "domainname" => $domain));
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
-    $headers = array('Content-type: application/x-www-form-urlencoded');
+    //  $headers = array('Content-type: application/x-www-form-urlencoded');
 
     $pageContents = HttpClient::quickPost($params["PostUrl"], array(
-        'message' => $Xpost,
+        'message' => $Xpost
     ));
     $responsearray = $json->decode($pageContents);
     $codeNode = $responsearray->response->code;
     $message = $responsearray->response->message;
 
-    $values = array();
 
     # - if the transfer has completed successfully
 
+
     if ($codeNode == "1000") {
         $expirydate = $responsearray->response->expirationDate;
+
 
         if ($expirydate != "") {
             $values['completed'] = true; #  when transfer completes successfully
@@ -1365,12 +1387,15 @@ function papaki_TransferSync($params)
         }
     }
 
+
     # - or if failed
+
 
     # - or if errored
     if ($codeNode != "1000") {
         $values['error'] = "Error at  Response from Papaki<br>Domain: " . $domain . "<br>Code: " . $codeNode . "<br>Message: " . $message . "<br><br>"; # error if the check fails - for example domain not found
     }
+
 
     return $values; # return the details of the sync
 
@@ -1387,6 +1412,7 @@ function isgrdomain($domainname)
     return substr($domainname, strlen('.gr') * -1) == '.gr';
 }
 
+
 function iseudomain($domainname)
 {
 
@@ -1395,6 +1421,7 @@ function iseudomain($domainname)
 
 function encodetolatin($mystring)
 {
+
 
     $mystring = str_replace("Α", "&Alpha;", $mystring);
     $mystring = str_replace("Β", "&Beta;", $mystring);
@@ -1446,6 +1473,7 @@ function encodetolatin($mystring)
     $mystring = str_replace("ω", "&omega;", $mystring);
     $mystring = str_replace("ς", "&sigmaf;", $mystring);
 
+
     $mystring = str_replace("ά", "&#940;", $mystring);
     $mystring = str_replace("έ", "&#941;", $mystring);
     $mystring = str_replace("ώ", "&#974;", $mystring);
@@ -1465,11 +1493,14 @@ function encodetolatin($mystring)
     $mystring = str_replace("ΐ", "&#912;", $mystring);
     $mystring = str_replace("ϋ", "&#971;", $mystring);
     $mystring = str_replace("ΰ", "&#944;", $mystring);
+
     return $mystring;
 }
 
+
 function latintogreek($mystring)
 {
+
 
     $mystring = str_replace("&Alpha;", "Α", $mystring);
     $mystring = str_replace("&Beta;", "Β", $mystring);
@@ -1521,6 +1552,7 @@ function latintogreek($mystring)
     $mystring = str_replace("&omega;", "ω", $mystring);
     $mystring = str_replace("&sigmaf;", "ς", $mystring);
 
+
     $mystring = str_replace("&#940;", "ά", $mystring);
     $mystring = str_replace("&#941;", "έ", $mystring);
     $mystring = str_replace("&#974;", "ώ", $mystring);
@@ -1540,5 +1572,8 @@ function latintogreek($mystring)
     $mystring = str_replace("&#912;", "ΐ", $mystring);
     $mystring = str_replace("&#971;", "ϋ", $mystring);
     $mystring = str_replace("&#944;", "ΰ", $mystring);
+
     return $mystring;
 }
+
+?>

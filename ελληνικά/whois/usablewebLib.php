@@ -4,9 +4,9 @@
 require 'libs/HttpClient.class.php';
 require_once 'json.php';
 /****************************************************************************************
- *                             UsableWeb Domain Name Search
+ *                           UsableWeb Domain Name Search
  *---------------------------------------------------------------------------------------*
- *              This is a Domain Name Search provided by Usableweb.
+ *             This is a Domain Name Search provided by Usableweb.
  * Requirments
  * In order to work this class you need the following:
  * - web server with PHP enabled    (Apache, IIS, Sambar etc)
@@ -31,11 +31,12 @@ require_once 'json.php';
  * [1] $ClassName->arrayNotAvDomains - Contains the not available domain names
  * [2] $ClassName->whois_response - the reply if u have to perform a whois search.
  *---------------------------------------------------------------------------------------*
- *                     Thats All folks! Enjoy!
+ *                    Thats All folks! Enjoy!
  *****************************************************************************************/
 
 define("_TYPE_DS", "domainSearch");
 define("_TYPE_WHOIS", "whois");
+
 
 class PapakiDomainNameSearch
 {
@@ -84,28 +85,54 @@ class PapakiDomainNameSearch
     {
         $this->type = $type;
 
+
         $json = new Services_JSON();
 
-        $jsonarray = array("request" => array("type" => $type, "apiKey" => encodetolatin($this->apikey), "username" => '', "password" => '', "domain" => encodetolatin($this->domainName), "lang" => 'el', "extensions" => array("ext" => array($this->extensions))));
+        $jsonarray = array(
+            "request" => array(
+                "type" => $type,
+                "apiKey" => encodetolatin($this->apikey),
+                "username" => '',
+                "password" => '',
+                "domain" => encodetolatin($this->domainName),
+                "lang" => 'el',
+                "extensions" => array("ext" => array($this->extensions))
+            )
+        );
         if ($this->type == _TYPE_WHOIS) {
-            $jsonarray = array("request" => array("type" => $type, "apiKey" => encodetolatin($this->apikey), "username" => '', "password" => '', "domain" => encodetolatin($this->domainName), "lang" => 'el'));
+            $jsonarray = array(
+                "request" => array(
+                    "type" => $type,
+                    "apiKey" => encodetolatin($this->apikey),
+                    "username" => '',
+                    "password" => '',
+                    "domain" => encodetolatin($this->domainName),
+                    "lang" => 'el'
+                )
+            );
 
         }
+
 
         $Xpost = $json->encode($jsonarray);
         $Xpost = latintogreek($Xpost);
 
+
         $headers = array('Content-type: application/x-www-form-urlencoded');
+
 
         $pageContents = HttpClient::quickPost($this->requestURL, array(
             'message' => $Xpost,
         ));
 
+
         $pageContents = $this->StripHTML($pageContents);
 
         $this->responsearray = $json->decode($pageContents);
 
+
         $this->parseResponse();
+
 
     }
 
@@ -131,6 +158,8 @@ class PapakiDomainNameSearch
             exit();
         }
         $codeNode = $this->responsearray->response->code;
+
+
         if ($codeNode != 1000) {
             $message = $this->responsearray->response->message;
 
@@ -139,13 +168,13 @@ class PapakiDomainNameSearch
 
         if ($this->type == _TYPE_DS) {
             if (property_exists($this->responsearray->response, 'availableDomains')) {
-                $avDomains = $this->responsearray->response->availableDomains;
+            $avDomains = $this->responsearray->response->availableDomains;
 
-                $json = new Services_JSON();
-                $tempresponsearray = $json->decode($this->responsearray->response->availableDomains);
-                if ($tempresponsearray->domain != "") {
-                    array_push($this->arrayAvDomains, $tempresponsearray->domain);
-                }
+            $json = new Services_JSON();
+            $tempresponsearray = $json->decode($this->responsearray->response->availableDomains);
+            if ($tempresponsearray->domain != "") {
+                array_push($this->arrayAvDomains, $tempresponsearray->domain);
+            }
             }
         } elseif ($this->type = _TYPE_WHOIS) {
 
@@ -161,6 +190,7 @@ class PapakiDomainNameSearch
             $body = str_replace(']]>', '', $body);
             $body = str_replace(']]', '', $body);
 
+
             $this->whois_response = $body;
             $this->whois_response = str_replace("<br />", "\n", $this->whois_response);
 
@@ -175,6 +205,7 @@ class PapakiDomainNameSearch
         for ($i = 0; $i <= count($s) - 1; $i++) {
             $return .= trim($s[$i]) . ",";
         }
+
         return substr($return, 0, strlen($return) - 1);
     }
 
@@ -200,15 +231,16 @@ class PapakiDomainNameSearch
             if ($openTag !== "true" && substr($str, $i, 1) !== ">") {
                 $return .= substr($str, $i, 1);
             }
-
         }
         $return = str_replace("\n", "<br />", $return);
+
         return $return;
     }
 }
 
 function encodetolatin($mystring)
 {
+
 
     $mystring = str_replace("Α", "&Alpha;", $mystring);
     $mystring = str_replace("Β", "&Beta;", $mystring);
@@ -260,6 +292,7 @@ function encodetolatin($mystring)
     $mystring = str_replace("ω", "&omega;", $mystring);
     $mystring = str_replace("ς", "&sigmaf;", $mystring);
 
+
     $mystring = str_replace("ά", "&#940;", $mystring);
     $mystring = str_replace("έ", "&#941;", $mystring);
     $mystring = str_replace("ώ", "&#974;", $mystring);
@@ -279,11 +312,14 @@ function encodetolatin($mystring)
     $mystring = str_replace("ΐ", "&#912;", $mystring);
     $mystring = str_replace("ϋ", "&#971;", $mystring);
     $mystring = str_replace("ΰ", "&#944;", $mystring);
+
     return $mystring;
 }
 
+
 function latintogreek($mystring)
 {
+
 
     $mystring = str_replace("&Alpha;", "Α", $mystring);
     $mystring = str_replace("&Beta;", "Β", $mystring);
@@ -335,6 +371,7 @@ function latintogreek($mystring)
     $mystring = str_replace("&omega;", "ω", $mystring);
     $mystring = str_replace("&sigmaf;", "ς", $mystring);
 
+
     $mystring = str_replace("&#940;", "ά", $mystring);
     $mystring = str_replace("&#941;", "έ", $mystring);
     $mystring = str_replace("&#974;", "ώ", $mystring);
@@ -354,10 +391,12 @@ function latintogreek($mystring)
     $mystring = str_replace("&#912;", "ΐ", $mystring);
     $mystring = str_replace("&#971;", "ϋ", $mystring);
     $mystring = str_replace("&#944;", "ΰ", $mystring);
+
     return $mystring;
 }
 
+
 //if ($_GET['debug'] == 'true' && $_GET['version'] == 'true'){
-//    $udns = new PapakiDomainNameSearch('');
-//    echo ('<b>Class version:</b> ' . $udns->version);
+//	$udns = new PapakiDomainNameSearch('');
+//	echo ('<b>Class version:</b> ' . $udns->version);
 //}

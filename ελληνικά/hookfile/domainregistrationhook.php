@@ -1,9 +1,9 @@
 <?PHP
 
-define("API_URL_HOOK", "https://www.mysite.gr/whmcs/includes/api.php"); //place your API_URL
-define("API_USERNAME_HOOK", "admin"); //place your API_USERNAME
-define("API_PASSWORD_HOOK", "mypassword"); //place your API_PASSWORD
-define("APIKEY_HOOK", "myapikey"); //place your papaki apikey
+define("API_URL_HOOK", "https://www.mysite.gr/whmcs/includes/api.php");            //place your API_URL
+define("API_USERNAME_HOOK", "admin");                                                //place your API_USERNAME
+define("API_PASSWORD_HOOK", "mypassword");                                            //place your API_PASSWORD
+define("APIKEY_HOOK", "myapikey");                                                    //place your papaki apikey
 define("POSTURL_HOOK", "https://api.papaki.com/register_url2.aspx");
 
 function hook_domainregistrationhook_AfterRegistrarRegistration($vars)
@@ -12,38 +12,52 @@ function hook_domainregistrationhook_AfterRegistrarRegistration($vars)
     if ($vars["params"]["registrar"] == "papaki") {
         //fill params
 
+
         $apikey_hook = APIKEY_HOOK;
         $posturl_hook = POSTURL_HOOK;
+
 
         $testmode = "";
         $domain = encodetolatin_hook($vars["params"]["sld"] . "." . $vars["params"]["tld"]);
 
+
         $json = new Services_JSON();
-        $jsonarray = array("request" => array("do" => 'getDomainInfo', "apiKey" => $apikey_hook, "domainname" => $domain));
+        $jsonarray = array(
+            "request" => array(
+                "do" => 'getDomainInfo',
+                "apiKey" => $apikey_hook,
+                "domainname" => $domain
+            )
+        );
         $Xpost = $json->encode($jsonarray);
         $Xpost = latintogreek3($Xpost);
         //echo $Xpost;
         $headers = array('Content-type: application/x-www-form-urlencoded');
 
         $pageContents = HttpClient::quickPost($posturl_hook, array(
-            'message' => $Xpost,
+            'message' => $Xpost
         ));
         $responsearray = $json->decode($pageContents);
         $codeNode = $responsearray->response->code;
         $message = $responsearray->response->message;
 
+
         if ($codeNode == "1000") {
             $expirydate = $responsearray->response->expirationDate;
 
+
             if ($expirydate != "") {
+
 
                 fix_Expiration_hook($vars["params"]["domainid"], $expirydate);
             }
         }
 
+
     }
 
 }
+
 
 function fix_Expiration_hook($domainid, $expirydate)
 {
@@ -52,12 +66,16 @@ function fix_Expiration_hook($domainid, $expirydate)
     $api_username_hook = API_USERNAME_HOOK;
     $api_password_hook = API_PASSWORD_HOOK;
 
+
     fix_ExpirationDomain_hook($domainid, $expirydate, $api_url_hook, $api_username_hook, $api_password_hook, "");
+
 
 }
 
+
 function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $password, $status)
 {
+
 
     $postfields["username"] = $username;
     $postfields["password"] = md5($password);
@@ -71,7 +89,9 @@ function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $pas
         $postfields["status"] = $status;
     }
 
+
     $postfields["responsetype"] = "xml";
+
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -85,7 +105,7 @@ function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $pas
 
     $xmlDoc_final = new XMLDocument();
     $xmlDoc_final->parseFromString($data);
-    $codeNode = $xmlDoc_final->xml->getTagContent('whmcsapi/result'); //get_elements_by_tagname("code");
+    $codeNode = $xmlDoc_final->xml->getTagContent('whmcsapi/result');//get_elements_by_tagname("code");
 
     if ($codeNode == "success") {
         return true;
@@ -96,8 +116,10 @@ function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $pas
 
 }
 
+
 function encodetolatin_hook($mystring)
 {
+
 
     $mystring = str_replace("Α", "&Alpha;", $mystring);
     $mystring = str_replace("Β", "&Beta;", $mystring);
@@ -149,6 +171,7 @@ function encodetolatin_hook($mystring)
     $mystring = str_replace("ω", "&omega;", $mystring);
     $mystring = str_replace("ς", "&sigmaf;", $mystring);
 
+
     $mystring = str_replace("ά", "&#940;", $mystring);
     $mystring = str_replace("έ", "&#941;", $mystring);
     $mystring = str_replace("ώ", "&#974;", $mystring);
@@ -168,11 +191,14 @@ function encodetolatin_hook($mystring)
     $mystring = str_replace("ΐ", "&#912;", $mystring);
     $mystring = str_replace("ϋ", "&#971;", $mystring);
     $mystring = str_replace("ΰ", "&#944;", $mystring);
+
     return $mystring;
 }
 
+
 function latintogreek3($mystring)
 {
+
 
     $mystring = str_replace("&Alpha;", "Α", $mystring);
     $mystring = str_replace("&Beta;", "Β", $mystring);
@@ -224,6 +250,7 @@ function latintogreek3($mystring)
     $mystring = str_replace("&omega;", "ω", $mystring);
     $mystring = str_replace("&sigmaf;", "ς", $mystring);
 
+
     $mystring = str_replace("&#940;", "ά", $mystring);
     $mystring = str_replace("&#941;", "έ", $mystring);
     $mystring = str_replace("&#974;", "ώ", $mystring);
@@ -243,8 +270,17 @@ function latintogreek3($mystring)
     $mystring = str_replace("&#912;", "ΐ", $mystring);
     $mystring = str_replace("&#971;", "ϋ", $mystring);
     $mystring = str_replace("&#944;", "ΰ", $mystring);
+
     return $mystring;
 }
 
+
 add_hook("AfterRegistrarRegistration", 1, "hook_domainregistrationhook_AfterRegistrarRegistration");
 add_hook("AfterRegistrarRenewal", 1, "hook_domainregistrationhook_AfterRegistrarRegistration");
+
+?>
+
+
+
+
+
