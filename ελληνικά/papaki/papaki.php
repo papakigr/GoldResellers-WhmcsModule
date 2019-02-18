@@ -407,7 +407,8 @@ function papaki_registerdomain($params)
             "ns2" => encodetolatin($params["ns2"]),
             "ns3" => encodetolatin($params["ns3"]),
             "ns4" => encodetolatin($params["ns4"]),
-            "owner_fullname" => encodetolatin($params["companyname"]),
+            "owner_fullname" => encodetolatin($params["fullname"]),
+            "owner_CompanyName" => encodetolatin($params["companyname"]),
             "owner_firstname" => encodetolatin($params["firstname"]),
             "owner_lastname" => encodetolatin($params["lastname"]),
             "owner_email" => encodetolatin($params["email"]),
@@ -472,9 +473,10 @@ function papaki_TransferDomain($params)
     $params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
 
     # Registrant Details
-    $RegistrantFullName = encodetolatin($params["companyname"]);
+    $RegistrantFullName = encodetolatin($params["fullname"]);
     $RegistrantFirstName = encodetolatin($params["firstname"]);
     $RegistrantLastName = encodetolatin($params["lastname"]);
+    $RegistrantCompanyName = encodetolatin($params["companyname"]);
     $RegistrantAddress1 = encodetolatin($params["address1"]);
     $RegistrantCity = encodetolatin($params["city"]);
     $RegistrantStateProvince = encodetolatin($params["state"]);
@@ -500,6 +502,7 @@ function papaki_TransferDomain($params)
                     "firstname" => $RegistrantFirstName,
                     "lastname" => $RegistrantLastName,
                     "fullname" => $RegistrantFullName,
+                    "CompanyName" => $RegistrantCompanyName,
                     "email" => $RegistrantEmailAddress,
                     "address" => $RegistrantAddress1,
                     "state" => $RegistrantStateProvince,
@@ -640,7 +643,7 @@ function papaki_GetContactDetails($params)
 
     $firstname = $responsearray->response->registrantFirstName;
     $LastName = $responsearray->response->registrantLastname;
-    $OrganizationName = $responsearray->response->registrantFullname;
+    $OrganizationName = $responsearray->response->registrantCompany;
     $JobTitle = $responsearray->response->registrantjob;
     $EmailAddress = $responsearray->response->registrantemail;
     $Address1 = $responsearray->response->registrantaddress1;
@@ -654,7 +657,7 @@ function papaki_GetContactDetails($params)
 
     $Adminfirstname = $responsearray->response->adminFirstName;
     $AdminLastName = $responsearray->response->adminLastname;
-    $AdminOrganizationName = $responsearray->response->adminFullname;
+    $AdminOrganizationName = $responsearray->response->adminCompany;
     $AdminJobTitle = $responsearray->response->adminjob;
     $AdminEmailAddress = $responsearray->response->adminemail;
     $AdminAddress1 = $responsearray->response->adminaddress1;
@@ -669,7 +672,7 @@ function papaki_GetContactDetails($params)
 
     $Techfirstname = $responsearray->response->techFirstName;
     $TechLastName = $responsearray->response->techLastname;
-    $TechOrganizationName = $responsearray->response->techFullname;
+    $TechOrganizationName = $responsearray->response->techCompany;
     $TechJobTitle = $responsearray->response->techjob;
     $TechEmailAddress = $responsearray->response->techemail;
     $TechAddress1 = $responsearray->response->techaddress1;
