@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Database\Capsule\Manager as Capsule;
+
 
 set_time_limit(200);
 
@@ -342,47 +342,6 @@ function papaki_registerdomain($params)
 {
 
 	$values = array();
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-	//Find contactDetails
-	$results = Capsule::table('tbldomains')
-		->join('tblorders', 'tbldomains.orderid', '=', 'tblorders.id')
-		->where('tbldomains.id', '=', $params["domainid"])
-		->select('tblorders.contactid', 'tbldomains.userid')
-		->get();
-
-	foreach ($results as $row) {
-
-
-		if ($row->contactid > 0) {
-			$contactarray = Capsule::table('tblcontacts')->where('id', '=', $row->contactid)->select('companyname',
-				'firstname', 'lastname', 'address1', 'address2', 'city', 'state', 'postcode', 'country', 'email',
-				'phonenumber')->get();
-		} else {
-			$contactarray = Capsule::table('tblclients')->where('id', '=', $row->userid)->select('companyname',
-				'firstname', 'lastname', 'address1', 'address2', 'city', 'state', 'postcode', 'country', 'email',
-				'phonenumber')->get();
-
-
-		}
-
-		$params["companyname"] = $contactarray['0']->companyname;
-		$params["firstname"] = $contactarray['0']->firstname;
-		$params["lastname"] = $contactarray['0']->lastname;
-		$params["address1"] = $contactarray['0']->address1;
-		$params["address2"] = $contactarray['0']->address2;
-		$params["city"] = $contactarray['0']->city;
-		$params["state"] = $contactarray['0']->state;
-		$params["postcode"] = $contactarray['0']->postcode;
-		$params["country"] = $contactarray['0']->country;
-		$params["email"] = $contactarray['0']->email;
-		$params["phonenumber"] = $contactarray['0']->phonenumber;
-	}
-
-
-/////////////////////////////////////////////////////////////
-
 
 	$username = '';
 	$password = '';
@@ -397,7 +356,7 @@ function papaki_registerdomain($params)
 	//extra attributes
 	$LegalType = encodetolatin($description_ar["Legal Type"]);
 	$tax_id = encodetolatin($description_ar["Tax ID"]);
-	$extra_country = encodetolatin($params["country"]);
+    $extra_country = encodetolatin($params["countrycode"]);
 
 	if ($LegalType == "Italian and foreign natural persons") {
 		$LegalType = "1";
@@ -432,12 +391,7 @@ function papaki_registerdomain($params)
 		$idprotection = "false";
 	}
 
-    $params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
-
-	if (!(startswith($params["phonenumber"], "+")) and !(startswith($params["phonenumber"], "00"))) {
-		$params["phonenumber"] = '+30.' . $params["phonenumber"];
-
-	}
+    $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
 
 	$json = new Services_JSON();
 	$jsonarray = array(
@@ -464,9 +418,9 @@ function papaki_registerdomain($params)
 			"owner_state" => encodetolatin($params["state"]),
 			"owner_city" => encodetolatin($params["city"]),
 			"owner_postcode" => encodetolatin($params["postcode"]),
-			"owner_country" => encodetolatin($params["country"]),
-			"owner_phone" => encodetolatin($params["phonenumber"]),
-			"owner_fax" => '+30.2',
+            "owner_country" => encodetolatin($params["countrycode"]),
+            "owner_phone" => encodetolatin($params["fullphonenumber"]),
+            "owner_fax" => '',
 			"owner_litepsd" => ' ',
 			"owner_title" => ' ',
 			"regperiod" => $params["regperiod"],
@@ -509,74 +463,16 @@ function papaki_TransferDomain($params)
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	//Find contactDetails
-	$results = Capsule::table('tbldomains')
-		->join('tblorders', 'tbldomains.orderid', '=', 'tblorders.id')
-		->where('tbldomains.id', '=', $params["domainid"])
-		->select('tblorders.contactid', 'tbldomains.userid')
-		->get();
-
-	foreach ($results as $row) {
-
-
-		if ($row->contactid > 0) {
-			$contactarray = Capsule::table('tblcontacts')->where('id', '=', $row->contactid)->select('companyname',
-				'firstname', 'lastname', 'address1', 'address2', 'city', 'state', 'postcode', 'country', 'email',
-				'phonenumber')->get();
-		} else {
-			$contactarray = Capsule::table('tblclients')->where('id', '=', $row->userid)->select('companyname',
-				'firstname', 'lastname', 'address1', 'address2', 'city', 'state', 'postcode', 'country', 'email',
-				'phonenumber')->get();
-
-
-		}
-		$params["companyname"] = $contactarray{'companyname'};
-		$params["firstname"] = $contactarray{'firstname'};
-		$params["lastname"] = $contactarray{'lastname'};
-		$params["address1"] = $contactarray{'address1'};
-		$params["address2"] = $contactarray{'address2'};
-		$params["city"] = $contactarray{'city'};
-		$params["state"] = $contactarray{'state'};
-		$params["postcode"] = $contactarray{'postcode'};
-		$params["country"] = $contactarray{'country'};
-		$params["email"] = $contactarray{'email'};
-		$params["phonenumber"] = $contactarray{'phonenumber'};
-	}
-
-
-/////////////////////////////////////////////////////////////
-
-
 	$username = '';
 	$password = '';
 	$apikey = encodetolatin($params["APIkey"]);
 	$tld = encodetolatin($params["tld"]);
 	$sld = encodetolatin($params["sld"]);
-	$transfersecret = encodetolatin($params["transfersecret"]);
+    $transfersecret = encodetolatin($params["eppcode"]);
 
 
-	if (trim($transfersecret) == "") {
-		$transfersecret = encodetolatin($_POST["eppcode"]);
-	}
-	if (trim($transfersecret) == "") {
-		$transfersecret = encodetolatin($_SESSION["eppcode"]);
-	}
 
-
-	if (trim($transfersecret) == "") {
-
-		for ($i = 0; $i < count($_SESSION['cart']['domains']); $i++) {
-			$mydomain = $sld . "." . $tld;
-			if ($_SESSION['cart']['domains'][$i]['domain'] == $mydomain) {
-				$transfersecret = encodetolatin($_SESSION['cart']['domains'][$i]['eppcode']);
-			}
-		}
-
-
-	}
-
-    $params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
-
+    $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
 
 	# Registrant Details
 	$RegistrantFullName = encodetolatin($params["companyname"]);
@@ -586,14 +482,9 @@ function papaki_TransferDomain($params)
 	$RegistrantCity = encodetolatin($params["city"]);
 	$RegistrantStateProvince = encodetolatin($params["state"]);
 	$RegistrantPostalCode = encodetolatin($params["postcode"]);
-	$RegistrantCountry = encodetolatin($params["country"]);
+    $RegistrantCountry = encodetolatin($params["countrycode"]);
 	$RegistrantEmailAddress = encodetolatin($params["email"]);
-	$RegistrantPhone = encodetolatin($params["phonenumber"]);
-	if (!(startswith($RegistrantPhone, "+")) and !(startswith($RegistrantPhone, "00"))) {
-		$RegistrantPhone = '+30.' . $RegistrantPhone;
-
-
-	}
+    $RegistrantPhone = encodetolatin($params["fullphonenumber"]);
 
 
 	$json = new Services_JSON();
@@ -859,59 +750,75 @@ function papaki_SaveContactDetails($params)
 	$sld = encodetolatin($params["sld"]);
 
 
-	$firstname = encodetolatin($_POST['contactdetails']["Registrant"]['First Name']);
-	$lastname = encodetolatin($_POST['contactdetails']["Registrant"]['Last Name']);
-	$fullname = encodetolatin($_POST['contactdetails']["Registrant"]['Organisation Name']);
-	$EmailAddress = encodetolatin($_POST['contactdetails']["Registrant"]['Email']);
-	$Address1 = encodetolatin($_POST['contactdetails']["Registrant"]['Address 1']);
-	$Address2 = encodetolatin($_POST['contactdetails']["Registrant"]['Address 2']);
-	$City = encodetolatin($_POST['contactdetails']["Registrant"]['City']);
-	$StateProvince = encodetolatin($_POST['contactdetails']["Registrant"]['State']);
-	$PostalCode = encodetolatin($_POST['contactdetails']["Registrant"]['Postcode']);
-	$Country = encodetolatin($_POST['contactdetails']["Registrant"]['Country']);
-	$Phone = encodetolatin($_POST['contactdetails']["Registrant"]['Phone']);
-	$Fax = encodetolatin($_POST['contactdetails']["Registrant"]['Fax']);
-	if ($Fax == "+30.2") {
+    $firstname = encodetolatin($params['contactdetails']["Registrant"]['First Name']);
+    $lastname = encodetolatin($params['contactdetails']["Registrant"]['Last Name']);
+    $fullname = encodetolatin($params['contactdetails']["Registrant"]['Organisation Name']);
+    $EmailAddress = encodetolatin($params['contactdetails']["Registrant"]['Email']);
+    $Address1 = encodetolatin($params['contactdetails']["Registrant"]['Address 1']);
+    $Address2 = encodetolatin($params['contactdetails']["Registrant"]['Address 2']);
+    $City = encodetolatin($params['contactdetails']["Registrant"]['City']);
+    $StateProvince = encodetolatin($params['contactdetails']["Registrant"]['State']);
+    $PostalCode = encodetolatin($params['contactdetails']["Registrant"]['Postcode']);
+    $Country = encodetolatin($params['contactdetails']["Registrant"]['Country']);
+    $Phone = encodetolatin($params["contactdetails"]["Registrant"]['Phone']);
+    $Fax = encodetolatin($params['contactdetails']["Registrant"]['Fax']);
+    if ($Fax == "+30.2" or $Fax == "+30.") {
 		$Fax = "";
 	}
-	$adminfirstname = encodetolatin($_POST['contactdetails']["Admin"]['First Name']);
-	$adminlastname = encodetolatin($_POST['contactdetails']["Admin"]['Last Name']);
-	$adminfullname = encodetolatin($_POST['contactdetails']["Admin"]['Organisation Name']);
+    $adminfirstname = encodetolatin($params['contactdetails']["Admin"]['First Name']);
+    $adminlastname = encodetolatin($params['contactdetails']["Admin"]['Last Name']);
+    $adminfullname = encodetolatin($params['contactdetails']["Admin"]['Organisation Name']);
 	if ($adminfullname == "") {
 		$adminfullname = $adminfirstname . " " . $adminlastname;
 	}
-	$AdminEmailAddress = encodetolatin($_POST['contactdetails']["Admin"]['Email']);
-	$AdminAddress1 = encodetolatin($_POST['contactdetails']["Admin"]['Address 1']);
-	$AdminAddress2 = encodetolatin($_POST['contactdetails']["Admin"]['Address 2']);
-	$AdminCity = encodetolatin($_POST['contactdetails']["Admin"]['City']);
-	$AdminStateProvince = encodetolatin($_POST['contactdetails']["Admin"]['State']);
-	$AdminPostalCode = encodetolatin($_POST['contactdetails']["Admin"]['Postcode']);
-	$AdminCountry = encodetolatin($_POST['contactdetails']["Admin"]['Country']);
-	$AdminPhone = encodetolatin($_POST['contactdetails']["Admin"]['Phone']);
-	$AdminFax = encodetolatin($_POST['contactdetails']["Admin"]['Fax']);
-	if ($AdminFax == "+30.2") {
+    $AdminEmailAddress = encodetolatin($params['contactdetails']["Admin"]['Email']);
+    $AdminAddress1 = encodetolatin($params['contactdetails']["Admin"]['Address 1']);
+    $AdminAddress2 = encodetolatin($params['contactdetails']["Admin"]['Address 2']);
+    $AdminCity = encodetolatin($params['contactdetails']["Admin"]['City']);
+    $AdminStateProvince = encodetolatin($params['contactdetails']["Admin"]['State']);
+    $AdminPostalCode = encodetolatin($params['contactdetails']["Admin"]['Postcode']);
+    $AdminCountry = encodetolatin($params['contactdetails']["Admin"]['Country']);
+    $AdminPhone = encodetolatin($params['contactdetails']["Admin"]['Phone']);
+    $AdminFax = encodetolatin($params['contactdetails']["Admin"]['Fax']);
+    if ($AdminFax == "+30.2" or $AdminFax == "+30.") {
 		$AdminFax = "";
 	}
 
-	$techfirstname = encodetolatin($_POST['contactdetails']["Tech"]['First Name']);
-	$techlastname = encodetolatin($_POST['contactdetails']["Tech"]['Last Name']);
-	$techfullname = encodetolatin($_POST['contactdetails']["Tech"]['Organisation Name']);
+    $techfirstname = encodetolatin($params['contactdetails']["Tech"]['First Name']);
+    $techlastname = encodetolatin($params['contactdetails']["Tech"]['Last Name']);
+    $techfullname = encodetolatin($params['contactdetails']["Tech"]['Organisation Name']);
 	if ($techfullname == "") {
 		$techfullname = $techfirstname . " " . $techlastname;
 	}
-	$TechEmailAddress = encodetolatin($_POST['contactdetails']["Tech"]['Email']);
-	$TechAddress1 = encodetolatin($_POST['contactdetails']["Tech"]['Address 1']);
-	$TechAddress2 = encodetolatin($_POST['contactdetails']["Tech"]['Address 2']);
-	$TechCity = encodetolatin($_POST['contactdetails']["Tech"]['City']);
-	$TechStateProvince = encodetolatin($_POST['contactdetails']["Tech"]['State']);
-	$TechPostalCode = encodetolatin($_POST['contactdetails']["Tech"]['Postcode']);
-	$TechCountry = encodetolatin($_POST['contactdetails']["Tech"]['Country']);
-	$TechPhone = encodetolatin($_POST['contactdetails']["Tech"]['Phone']);
-	$TechFax = encodetolatin($_POST['contactdetails']["Tech"]['Fax']);
-	if ($TechFax == "+30.2") {
+    $TechEmailAddress = encodetolatin($params['contactdetails']["Tech"]['Email']);
+    $TechAddress1 = encodetolatin($params['contactdetails']["Tech"]['Address 1']);
+    $TechAddress2 = encodetolatin($params['contactdetails']["Tech"]['Address 2']);
+    $TechCity = encodetolatin($params['contactdetails']["Tech"]['City']);
+    $TechStateProvince = encodetolatin($params['contactdetails']["Tech"]['State']);
+    $TechPostalCode = encodetolatin($params['contactdetails']["Tech"]['Postcode']);
+    $TechCountry = encodetolatin($params['contactdetails']["Tech"]['Country']);
+    $TechPhone = encodetolatin($params['contactdetails']["Tech"]['Phone']);
+    $TechFax = encodetolatin($params['contactdetails']["Tech"]['Fax']);
+    if ($TechFax == "+30.2" or $TechFax == "+30.") {
 		$TechFax = "";
 	}
 
+    //fix empty chars
+    $Phone=strtr($Phone,array(" " => ""));
+    $AdminPhone=strtr($AdminPhone,array(" " => ""));
+    $TechPhone=strtr($TechPhone,array(" " => ""));
+
+    if($AdminEmailAddress=='' and $adminfirstname==''  and $adminlastname==''){
+        $AdminCountry='';
+        $AdminPhone='';
+        $AdminFax='';
+    }
+
+    if($TechEmailAddress=='' and $techfirstname==''  and $techlastname==''){
+        $TechCountry='';
+        $TechPhone='';
+        $TechFax='';
+    }
 
 	if (trim($EmailAddress) == '') {
 		$EmailAddress = ' ';
