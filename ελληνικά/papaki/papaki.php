@@ -389,6 +389,7 @@ function papaki_registerdomain($params)
         $idprotection = "false";
     }
 
+    $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
 
     $json = new Services_JSON();
     $jsonarray = array(
@@ -469,7 +470,7 @@ function papaki_TransferDomain($params)
 
 
 
-    $params["phonenumber"]=strtr($params["phonenumber"],array(" " => ""));
+    $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
 
     # Registrant Details
     $RegistrantFullName = encodetolatin($params["companyname"]);
