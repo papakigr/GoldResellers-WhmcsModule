@@ -748,11 +748,8 @@ function papaki_SaveContactDetails($params)
 
     $firstname = encodetolatin($params['contactdetails']["Registrant"]['First Name']);
     $lastname = encodetolatin($params['contactdetails']["Registrant"]['Last Name']);
-    $fullname = encodetolatin($params['contactdetails']["Registrant"]['Full Name']);
-    if ($fullname == "") {
         $fullname = $firstname . " " . $lastname;
-    }
-    $companyName = encodetolatin($params['contactdetails']["Registrant"]['Company Name']);
+    $companyName = encodetolatin($params['contactdetails']["Registrant"]['Organisation Name']);
     $EmailAddress = encodetolatin($params['contactdetails']["Registrant"]['Email']);
     $Address1 = encodetolatin($params['contactdetails']["Registrant"]['Address 1']);
     $Address2 = encodetolatin($params['contactdetails']["Registrant"]['Address 2']);
@@ -767,11 +764,8 @@ function papaki_SaveContactDetails($params)
 	}
     $adminfirstname = encodetolatin($params['contactdetails']["Admin"]['First Name']);
     $adminlastname = encodetolatin($params['contactdetails']["Admin"]['Last Name']);
-    $adminfullname = encodetolatin($params['contactdetails']["Admin"]['Full Name']);
-	if ($adminfullname == "") {
 		$adminfullname = $adminfirstname . " " . $adminlastname;
-	}
-    $admincompanyName = encodetolatin($params['contactdetails']["Admin"]['Company Name']);
+    $admincompanyName = encodetolatin($params['contactdetails']["Admin"]['Organisation Name']);
     $AdminEmailAddress = encodetolatin($params['contactdetails']["Admin"]['Email']);
     $AdminAddress1 = encodetolatin($params['contactdetails']["Admin"]['Address 1']);
     $AdminAddress2 = encodetolatin($params['contactdetails']["Admin"]['Address 2']);
@@ -787,11 +781,8 @@ function papaki_SaveContactDetails($params)
 
     $techfirstname = encodetolatin($params['contactdetails']["Tech"]['First Name']);
     $techlastname = encodetolatin($params['contactdetails']["Tech"]['Last Name']);
-    $techfullname = encodetolatin($params['contactdetails']["Tech"]['Organisation Name']);
-	if ($techfullname == "") {
 		$techfullname = $techfirstname . " " . $techlastname;
-	}
-    $techcompanyName = encodetolatin($params['contactdetails']["Tech"]['Company Name']);
+    $techcompanyName = encodetolatin($params['contactdetails']["Tech"]['Organisation Name']);
     $TechEmailAddress = encodetolatin($params['contactdetails']["Tech"]['Email']);
     $TechAddress1 = encodetolatin($params['contactdetails']["Tech"]['Address 1']);
     $TechAddress2 = encodetolatin($params['contactdetails']["Tech"]['Address 2']);
