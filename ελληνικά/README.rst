@@ -45,7 +45,7 @@ Papaki Module Whmcs
 		το οποίο κάνατε upload.
 	
 	B) Αν η έκδοση της whmcs σας είναι μεγαλύτερη ή ίση της 7.0.0 τότε ακολουθήσε τα παρακάτω βήματα 
-		1) Ανοίξτε το αρχείο whois.json που βρίσκεται στον φάκελο DomainSearchFiles στα αρχεία
+		1) Ανοίξτε το αρχείο whois.json που βρίσκεται στον φάκελο resources/domains/ στα αρχεία
 		που έχετε κατεβάσει
 		2) Ανοίξτε το αρχείο whois/whois.php και βάλτε το apikey που έχετε στο papaki.
 		3) Κάντε upload μέσα στον φάκελο που έχετε το whmcs τον φάκελο whois.
@@ -57,6 +57,15 @@ Papaki Module Whmcs
 Οι δυνατότητες που ακολουθούν (HOOKS,SYΝCHRONIZATION) μπορούν να εφαρμοστούν στο site σας μόνο αν 
 έχετε whmcs version από 5.1.4 και πάνω και php από 4 και πάνω.
 
+
+
+Extra Domain Attributes
+-----
+.. code-block:: bash
+
+	Ο διακριτικός τίτλος εταιρείας είναι ένα extra πεδίο για τις κατοχυρώσεις του μητρώου των
+    ελληνικών ονομάτων χώρου. Για να μπορεί να γίνει συμπλήρωση αυτού του extra πεδίου θα πρέπει να βάλετε
+    στον φάκελο /resources/domains/ το αρχείο /resources/domains/additionalfields.php .
 
 HOOKS
 -----

@@ -380,6 +380,9 @@ function papaki_registerdomain($params)
 	if ($LegalType == "non natural foreigners") {
 		$LegalType = "7";
 	}
+
+
+    $CompanyTitle = encodetolatin($description_ar["Company Title"]);
 	//end extra attributes
 
 	$tld = encodetolatin($params["tld"]);
@@ -393,6 +396,11 @@ function papaki_registerdomain($params)
 	}
 
     $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
+    if (isgrdomain($sld . "." . $tld)) {
+    if(trim($params["companyname"])==""){
+        $params["companyname"]=$params["fullname"];
+    }
+    }
 
 	$json = new Services_JSON();
 	$jsonarray = array(
@@ -422,7 +430,7 @@ function papaki_registerdomain($params)
             "owner_phone" => encodetolatin($params["fullphonenumber"]),
             "owner_fax" => '',
 			"owner_litepsd" => ' ',
-			"owner_title" => ' ',
+            "owner_CompanyTitle" => $CompanyTitle,
 			"regperiod" => $params["regperiod"],
 			"idprotect" => $idprotection,
 			"customer_language" => "gr",
@@ -473,6 +481,11 @@ function papaki_TransferDomain($params)
 
 
     $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
+    if (isgrdomain($sld . "." . $tld)) {
+        if (trim($params["companyname"]) == "") {
+            $params["companyname"] = $params["fullname"];
+        }
+    }
 
 	# Registrant Details
     $RegistrantFullName = encodetolatin($params["fullname"]);
@@ -510,8 +523,7 @@ function papaki_TransferDomain($params)
 					"postcode" => $RegistrantPostalCode,
 					"country" => $RegistrantCountry,
 					"phone" => $RegistrantPhone,
-					"fax" => "",
-                    "title" => ''
+                    "fax" => ""
 				)
 			)
 		);
@@ -766,6 +778,13 @@ function papaki_SaveContactDetails($params)
     $adminlastname = encodetolatin($params['contactdetails']["Admin"]['Last Name']);
 		$adminfullname = $adminfirstname . " " . $adminlastname;
     $admincompanyName = encodetolatin($params['contactdetails']["Admin"]['Organisation Name']);
+
+    if (isgrdomain($sld . "." . $tld)) {
+        if (trim($admincompanyName) == "") {
+            $admincompanyName=$adminfullname;
+        }
+    }
+
     $AdminEmailAddress = encodetolatin($params['contactdetails']["Admin"]['Email']);
     $AdminAddress1 = encodetolatin($params['contactdetails']["Admin"]['Address 1']);
     $AdminAddress2 = encodetolatin($params['contactdetails']["Admin"]['Address 2']);
@@ -783,6 +802,11 @@ function papaki_SaveContactDetails($params)
     $techlastname = encodetolatin($params['contactdetails']["Tech"]['Last Name']);
 		$techfullname = $techfirstname . " " . $techlastname;
     $techcompanyName = encodetolatin($params['contactdetails']["Tech"]['Organisation Name']);
+    if (isgrdomain($sld . "." . $tld)) {
+        if (trim($techcompanyName) == "") {
+            $techcompanyName=$techfullname;
+        }
+    }
     $TechEmailAddress = encodetolatin($params['contactdetails']["Tech"]['Email']);
     $TechAddress1 = encodetolatin($params['contactdetails']["Tech"]['Address 1']);
     $TechAddress2 = encodetolatin($params['contactdetails']["Tech"]['Address 2']);

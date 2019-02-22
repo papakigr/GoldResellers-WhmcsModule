@@ -39,7 +39,7 @@ Installation
 		4) Go to the folder whmcs at your server and upload the folder whois 
 	
 	B) If you use Whmcs Version greater or equal to 7.0.0 then
-		1) Open the file whois.json which is in the folder "DomainSearchFiles" 
+		1) Open the file whois.json which is in the folder "resources/domains/"
 		2) Open the file whois/whois.php and put your apikey.
 		3) Go to the folder whmcs at your server and upload the folder whois 
 		4) At the file whois.json replace the word "mysite" with your site url to whois/whois.php
