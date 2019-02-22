@@ -421,7 +421,7 @@ function papaki_registerdomain($params)
             "owner_phone" => encodetolatin($params["fullphonenumber"]),
             "owner_fax" => '',
             "owner_litepsd" => ' ',
-            "owner_title" => ' ',
+            "owner_CompanyTitle" => ' ',
             "regperiod" => $params["regperiod"],
             "idprotect" => $idprotection,
             "customer_language" => "gr",
@@ -510,7 +510,7 @@ function papaki_TransferDomain($params)
                     "country" => $RegistrantCountry,
                     "phone" => $RegistrantPhone,
                     "fax" => "",
-                    "title" => ''
+                    "CompanyTitle" => ''
                 )
             )
         );
