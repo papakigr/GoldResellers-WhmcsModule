@@ -1,7 +1,5 @@
 <?php
 
-use \WHMCS\Domains\DomainLookup\SearchResult;
-use \WHMCS\Domains\DomainLookup\ResultsList;
 
 set_time_limit(200);
 
@@ -1319,88 +1317,7 @@ function papaki_TransferSync($params)
 
 }
 
-/**
- * Check Domain Availability.
- *
- * Determine if a domain or group of domains are available for
- * registration or transfer.
- *
- * @param array $params common module parameters
- * @see https://developers.whmcs.com/domain-registrars/module-parameters/
- *
- * @see \WHMCS\Domains\DomainLookup\SearchResult
- * @see \WHMCS\Domains\DomainLookup\ResultsList
- *
- * @throws Exception Upon domain availability check failure.
- *
- * @return \WHMCS\Domains\DomainLookup\ResultsList An ArrayObject based collection of \WHMCS\Domains\DomainLookup\SearchResult results
-*/
-/*
-function papaki_CheckAvailability($params)
-{
 
-    $tld = encodetolatin($params["tld"]);
-    $sld = encodetolatin($params["sld"]);
-
-    // user defined configuration values
-    $userIdentifier = $params['API Username'];
-    $apiKey = $params['API Key'];
-
-    $accountMode = $params['Account Mode'];
-    $emailPreference = $params['Email Preference'];
-    $additionalInfo = $params['Additional Information'];
-    // availability check parameters
-    $searchTerm = $params['searchTerm'];
-    $punyCodeSearchTerm = $params['punyCodeSearchTerm'];
-    $tldsToInclude = $params['tldsToInclude'];
-    $isIdnDomain = (bool) $params['isIdnDomain'];
-    $premiumEnabled = (bool) $params['premiumEnabled'];
-    // Build post data
-    $postfields = array(
-        'username' => $userIdentifier,
-        'password' => $apiKey,
-        'testmode' => $testMode,
-        'domain' => $sld . '.' . $tld,
-        'searchTerm' => $searchTerm,
-        'tldsToSearch' => $tldsToInclude,
-        'includePremiumDomains' => $premiumEnabled,
-    );
-    try {
-
-        $results = new ResultsList();
-//        foreach ($api->getFromResponse('domains') as $domain) {
-            // Instantiate a new domain search result object
-            $searchResult = new SearchResult('testvoula2','gr');
-            // Determine the appropriate status to return
-
-                $status = SearchResult::STATUS_TLD_NOT_SUPPORTED;
-//                $status = SearchResult::STATUS_REGISTERED;
-//                $status = SearchResult::STATUS_RESERVED;
-//                $status = SearchResult::STATUS_TLD_NOT_SUPPORTED;
-
-            $searchResult->setStatus($status);
-            // Return premium information if applicable
-//            if ($domain['isPremiumName']) {
-//                $searchResult->setPremiumDomain(true);
-//                $searchResult->setPremiumCostPricing(
-//                    array(
-//                        'register' => $domain['premiumRegistrationPrice'],
-//                        'renew' => $domain['premiumRenewPrice'],
-//                        'CurrencyCode' => 'USD',
-//                    )
-//                );
-//            }
-            // Append to the search results list
-            $results->append($searchResult);
-//        }
-        return $results;
-    } catch (\Exception $e) {
-        return array(
-            'error' => $e->getMessage(),
-        );
-    }
-}
-*/
 
 
 function startsWith($haystack, $needle)

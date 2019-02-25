@@ -54,18 +54,25 @@ Papaki Module Whmcs
 		5) Ανεβάστε το  αρχείο whois.json στον server ,στο μονοπάτι /resources/domains/
 		όπως αναφέρει η whmcs εδώ http://docs.whmcs.com/WHOIS_Servers
 
-Οι δυνατότητες που ακολουθούν (HOOKS,SYΝCHRONIZATION) μπορούν να εφαρμοστούν στο site σας μόνο αν 
-έχετε whmcs version από 5.1.4 και πάνω και php από 4 και πάνω.
 
 
-
-Extra Domain Attributes
+Domain Additional Fields
 -----
 .. code-block:: bash
 
 	Ο διακριτικός τίτλος εταιρείας είναι ένα extra πεδίο για τις κατοχυρώσεις του μητρώου των
     ελληνικών ονομάτων χώρου. Για να μπορεί να γίνει συμπλήρωση αυτού του extra πεδίου θα πρέπει να βάλετε
     στον φάκελο /resources/domains/ το αρχείο /resources/domains/additionalfields.php .
+
+Lang Overrides
+-----
+.. code-block:: bash
+
+	Θα πρέπει να προσθέσετε τον φάκελο overrides/ μέσα στον φάκελο /lang/ ώστε να σας εμφανίζονται κάποια επιπλέον lnagstrings
+    όπως για παράδειγμα η περιγρφή των additional fields.
+
+Οι δυνατότητες που ακολουθούν (HOOKS,SYΝCHRONIZATION) μπορούν να εφαρμοστούν στο site σας μόνο αν
+έχετε whmcs version από 5.1.4 και πάνω και php από 4 και πάνω.
 
 HOOKS
 -----
