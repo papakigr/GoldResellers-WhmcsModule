@@ -42,7 +42,7 @@ class Leaf {
 	  *	@param		optional mixed value
 	  *	@returns	none
 	  */
-	function Leaf($value = "") {
+    public  function __construct($value = "") {
 		$this->setValue($value);
 	}
 
