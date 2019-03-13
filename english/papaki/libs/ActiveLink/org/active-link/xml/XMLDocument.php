@@ -54,7 +54,7 @@ class XMLDocument extends File {
 	  *	@param		optional string filename
 	  *	@param		optional string fileOpenMode
 	  */
-	function XMLDocument($filename = "", $fileOpenMode = "r") {
+    public  function __construct($filename = "", $fileOpenMode = "r") {
 		$success = $this->File($filename, $fileOpenMode);
 		$this->tag = new Tag();
 		$this->tag->tagStartOpen = "<?";
