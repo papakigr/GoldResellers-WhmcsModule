@@ -61,7 +61,7 @@ class Tag {
 	  *	@param		optional string content
 	  *	@returns	none
 	  */
-	function Tag($name = "", $content = "") {
+    public  function __construct($name = "", $content = "") {
 		$this->tagStartOpen = "<";
 		$this->tagStartClose = ">";
 		$this->tagClose = "/>";
