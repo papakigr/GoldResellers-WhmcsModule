@@ -1,5 +1,8 @@
 <?php
-
+/*
+ * Version 4.2.5
+ * 04/04/2019
+ */
 
 set_time_limit(200);
 
@@ -8,7 +11,6 @@ import('org.active-link.xml.XMLDocument');
 
 require('libs/HttpClient.class.php');
 require_once('json.php');
-
 
 
 function papaki_getConfigArray()
