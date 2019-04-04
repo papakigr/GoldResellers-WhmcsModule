@@ -39,15 +39,30 @@ Installation
 		4) Go to the folder whmcs at your server and upload the folder whois 
 	
 	B) If you use Whmcs Version greater or equal to 7.0.0 then
-		1) Open the file whois.json which is in the folder "DomainSearchFiles" 
+		1) Open the file whois.json which is in the folder "resources/domains/"
 		2) Open the file whois/whois.php and put your apikey.
 		3) Go to the folder whmcs at your server and upload the folder whois 
 		4) At the file whois.json replace the word "mysite" with your site url to whois/whois.php
 		5) upload the file whois.json at the  folder /resources/domains/
 		(See here  http://docs.whmcs.com/WHOIS_Servers )
 
-HOOKS and SYNCHRONIZATION require whmcs version greater than 5.1.3 and php greater than 3 
 
+Domain Additional Fields
+-----
+.. code-block:: bash
+
+	Company title is an additional domain field for GR registry.Please upload the file
+	/resources/domains/additionalfields.php .
+
+Lang Overrides
+-----
+.. code-block:: bash
+
+	Extra langstrings are included at the folder overrides/. Please upload the folder  overrides/ into
+	the lang/ folder on your whmcs installation.
+
+
+HOOKS and SYNCHRONIZATION require whmcs version greater than 5.1.3 and php greater than 3 
 
 HOOKS
 -----

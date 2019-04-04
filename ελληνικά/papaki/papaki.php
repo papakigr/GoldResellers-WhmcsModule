@@ -1,5 +1,8 @@
 <?php
-
+/*
+ * Version 4.2.5
+ * 04/04/2019
+ */
 
 set_time_limit(200);
 
@@ -377,6 +380,9 @@ function papaki_registerdomain($params)
     if ($LegalType == "non natural foreigners") {
         $LegalType = "7";
     }
+
+
+    $CompanyTitle = encodetolatin($description_ar["Company Title"]);
     //end extra attributes
 
     $tld = encodetolatin($params["tld"]);
@@ -390,13 +396,20 @@ function papaki_registerdomain($params)
     }
 
     $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
+    if (!(startswith($params["fullphonenumber"], "+")) and !(startswith($params["fullphonenumber"], "00"))) {
+        $params["fullphonenumber"] = '+30.' . $params["fullphonenumber"];
+    }
+
+    if (isgrdomain($sld . "." . $tld)) {
+        if (trim($params["companyname"]) == "") {
+            $params["companyname"] = $params["fullname"];
+        }
+    }
 
     $json = new Services_JSON();
     $jsonarray = array(
         "request" => array(
             "do" => 'domainregister',
-            "username" => $username,
-            "password" => $password,
             "apiKey" => $apikey,
             "domainname" => $sld . "." . $tld,
             "description" => $description,
@@ -408,7 +421,8 @@ function papaki_registerdomain($params)
             "ns2" => encodetolatin($params["ns2"]),
             "ns3" => encodetolatin($params["ns3"]),
             "ns4" => encodetolatin($params["ns4"]),
-            "owner_fullname" => encodetolatin($params["companyname"]),
+            "owner_fullname" => encodetolatin($params["fullname"]),
+            "owner_CompanyName" => encodetolatin($params["companyname"]),
             "owner_firstname" => encodetolatin($params["firstname"]),
             "owner_lastname" => encodetolatin($params["lastname"]),
             "owner_email" => encodetolatin($params["email"]),
@@ -420,7 +434,7 @@ function papaki_registerdomain($params)
             "owner_phone" => encodetolatin($params["fullphonenumber"]),
             "owner_fax" => '',
             "owner_litepsd" => ' ',
-            "owner_title" => ' ',
+            "owner_CompanyTitle" => $CompanyTitle,
             "regperiod" => $params["regperiod"],
             "idprotect" => $idprotection,
             "customer_language" => "gr",
@@ -471,11 +485,20 @@ function papaki_TransferDomain($params)
 
 
     $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
+    if (!(startswith($params["fullphonenumber"], "+")) and !(startswith($params["fullphonenumber"], "00"))) {
+        $params["fullphonenumber"] = '+30.' . $params["fullphonenumber"];
+    }
+    if (isgrdomain($sld . "." . $tld)) {
+        if (trim($params["companyname"]) == "") {
+            $params["companyname"] = $params["fullname"];
+        }
+    }
 
     # Registrant Details
-    $RegistrantFullName = encodetolatin($params["companyname"]);
+    $RegistrantFullName = encodetolatin($params["fullname"]);
     $RegistrantFirstName = encodetolatin($params["firstname"]);
     $RegistrantLastName = encodetolatin($params["lastname"]);
+    $RegistrantCompanyName = encodetolatin($params["companyname"]);
     $RegistrantAddress1 = encodetolatin($params["address1"]);
     $RegistrantCity = encodetolatin($params["city"]);
     $RegistrantStateProvince = encodetolatin($params["state"]);
@@ -491,8 +514,6 @@ function papaki_TransferDomain($params)
         $jsonarray = array(
             "request" => array(
                 "do" => 'changeregistrar',
-                "username" => $username,
-                "password" => $password,
                 "apiKey" => $apikey,
                 "domainname" => $sld . "." . $tld,
                 "customer_language" => 'gr',
@@ -501,6 +522,7 @@ function papaki_TransferDomain($params)
                     "firstname" => $RegistrantFirstName,
                     "lastname" => $RegistrantLastName,
                     "fullname" => $RegistrantFullName,
+                    "CompanyName" => $RegistrantCompanyName,
                     "email" => $RegistrantEmailAddress,
                     "address" => $RegistrantAddress1,
                     "state" => $RegistrantStateProvince,
@@ -508,8 +530,7 @@ function papaki_TransferDomain($params)
                     "postcode" => $RegistrantPostalCode,
                     "country" => $RegistrantCountry,
                     "phone" => $RegistrantPhone,
-                    "fax" => "",
-                    "title" => ''
+                    "fax" => ""
                 )
             )
         );
@@ -571,8 +592,6 @@ function papaki_RenewDomain($params)
     $jsonarray = array(
         "request" => array(
             "do" => 'domainupdate',
-            "username" => $username,
-            "password" => $password,
             "apiKey" => $apikey,
             "domainname" => $sld . "." . $tld,
             "customer_language" => 'gr',
@@ -619,8 +638,6 @@ function papaki_GetContactDetails($params)
     $jsonarray = array(
         "request" => array(
             "do" => 'getcontactdetails',
-            "username" => $username,
-            "password" => $password,
             "apiKey" => $apikey,
             "domainname" => $sld . "." . $tld
         )
@@ -641,7 +658,7 @@ function papaki_GetContactDetails($params)
 
     $firstname = $responsearray->response->registrantFirstName;
     $LastName = $responsearray->response->registrantLastname;
-    $OrganizationName = $responsearray->response->registrantFullname;
+    $OrganizationName = $responsearray->response->registrantorg;
     $JobTitle = $responsearray->response->registrantjob;
     $EmailAddress = $responsearray->response->registrantemail;
     $Address1 = $responsearray->response->registrantaddress1;
@@ -655,7 +672,7 @@ function papaki_GetContactDetails($params)
 
     $Adminfirstname = $responsearray->response->adminFirstName;
     $AdminLastName = $responsearray->response->adminLastname;
-    $AdminOrganizationName = $responsearray->response->adminFullname;
+    $AdminOrganizationName = $responsearray->response->adminorg;
     $AdminJobTitle = $responsearray->response->adminjob;
     $AdminEmailAddress = $responsearray->response->adminemail;
     $AdminAddress1 = $responsearray->response->adminaddress1;
@@ -670,7 +687,7 @@ function papaki_GetContactDetails($params)
 
     $Techfirstname = $responsearray->response->techFirstName;
     $TechLastName = $responsearray->response->techLastname;
-    $TechOrganizationName = $responsearray->response->techFullname;
+    $TechOrganizationName = $responsearray->response->techorg;
     $TechJobTitle = $responsearray->response->techjob;
     $TechEmailAddress = $responsearray->response->techemail;
     $TechAddress1 = $responsearray->response->techaddress1;
@@ -750,7 +767,8 @@ function papaki_SaveContactDetails($params)
 
     $firstname = encodetolatin($params['contactdetails']["Registrant"]['First Name']);
     $lastname = encodetolatin($params['contactdetails']["Registrant"]['Last Name']);
-    $fullname = encodetolatin($params['contactdetails']["Registrant"]['Organisation Name']);
+    $fullname = $firstname . " " . $lastname;
+    $companyName = encodetolatin($params['contactdetails']["Registrant"]['Organisation Name']);
     $EmailAddress = encodetolatin($params['contactdetails']["Registrant"]['Email']);
     $Address1 = encodetolatin($params['contactdetails']["Registrant"]['Address 1']);
     $Address2 = encodetolatin($params['contactdetails']["Registrant"]['Address 2']);
@@ -765,10 +783,15 @@ function papaki_SaveContactDetails($params)
     }
     $adminfirstname = encodetolatin($params['contactdetails']["Admin"]['First Name']);
     $adminlastname = encodetolatin($params['contactdetails']["Admin"]['Last Name']);
-    $adminfullname = encodetolatin($params['contactdetails']["Admin"]['Organisation Name']);
-    if ($adminfullname == "") {
-        $adminfullname = $adminfirstname . " " . $adminlastname;
+    $adminfullname = $adminfirstname . " " . $adminlastname;
+    $admincompanyName = encodetolatin($params['contactdetails']["Admin"]['Organisation Name']);
+
+    if (isgrdomain($sld . "." . $tld)) {
+        if (trim($admincompanyName) == "") {
+            $admincompanyName=$adminfullname;
+        }
     }
+
     $AdminEmailAddress = encodetolatin($params['contactdetails']["Admin"]['Email']);
     $AdminAddress1 = encodetolatin($params['contactdetails']["Admin"]['Address 1']);
     $AdminAddress2 = encodetolatin($params['contactdetails']["Admin"]['Address 2']);
@@ -784,9 +807,12 @@ function papaki_SaveContactDetails($params)
 
     $techfirstname = encodetolatin($params['contactdetails']["Tech"]['First Name']);
     $techlastname = encodetolatin($params['contactdetails']["Tech"]['Last Name']);
-    $techfullname = encodetolatin($params['contactdetails']["Tech"]['Organisation Name']);
-    if ($techfullname == "") {
-        $techfullname = $techfirstname . " " . $techlastname;
+    $techfullname = $techfirstname . " " . $techlastname;
+    $techcompanyName = encodetolatin($params['contactdetails']["Tech"]['Organisation Name']);
+    if (isgrdomain($sld . "." . $tld)) {
+        if (trim($techcompanyName) == "") {
+            $techcompanyName=$techfullname;
+        }
     }
     $TechEmailAddress = encodetolatin($params['contactdetails']["Tech"]['Email']);
     $TechAddress1 = encodetolatin($params['contactdetails']["Tech"]['Address 1']);
@@ -949,6 +975,7 @@ function papaki_SaveContactDetails($params)
             "firstname" => $firstname,
             "lastname" => $lastname,
             "fullname" => $fullname,
+            "CompanyName" => $companyName,
             "emailaddress" => $EmailAddress,
             "address1" => $Address1,
             "address2" => $Address2,
@@ -961,6 +988,7 @@ function papaki_SaveContactDetails($params)
             "adminfirstname" => $adminfirstname,
             "adminlastname" => $adminlastname,
             "adminfullname" => $adminfullname,
+            "adminCompanyName" => $admincompanyName,
             "adminemailaddress" => $AdminEmailAddress,
             "adminaddress1" => $AdminAddress1,
             "adminaddress2" => $AdminAddress2,
@@ -973,6 +1001,7 @@ function papaki_SaveContactDetails($params)
             "techfirstname" => $techfirstname,
             "techlastname" => $techlastname,
             "techfullname" => $techfullname,
+            "techCompanyName" => $techcompanyName,
             "techemailaddress" => $TechEmailAddress,
             "techaddress1" => $TechAddress1,
             "techaddress2" => $TechAddress2,
@@ -1016,8 +1045,7 @@ function papaki_GetEPPCode($params)
 {
 
     $values = array();
-    $username = '';
-    $password = '';
+
     $apikey = encodetolatin($params["APIkey"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
@@ -1027,8 +1055,6 @@ function papaki_GetEPPCode($params)
     $jsonarray = array(
         "request" => array(
             "do" => 'getauthocode',
-            "username" => $username,
-            "password" => $password,
             "apiKey" => $apikey,
             "domainname" => $sld . "." . $tld
         )
@@ -1064,8 +1090,6 @@ function papaki_GetEPPCode($params)
 function papaki_RegisterNameserver($params)
 {
     $values = array();
-    $username = '';
-    $password = '';
     $apikey = encodetolatin($params["APIkey"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
@@ -1077,8 +1101,6 @@ function papaki_RegisterNameserver($params)
     $jsonarray = array(
         "request" => array(
             "do" => 'registerns',
-            "username" => $username,
-            "password" => $password,
             "apiKey" => $apikey,
             "domainname" => $sld . "." . $tld,
             "ns" => $nameserver,
@@ -1111,8 +1133,6 @@ function papaki_RegisterNameserver($params)
 function papaki_ModifyNameserver($params)
 {
     $values = array();
-    $username = '';
-    $password = '';
     $apikey = encodetolatin($params["APIkey"]);
     $tld = encodetolatin($params["tld"]);
     $sld = encodetolatin($params["sld"]);
@@ -1125,8 +1145,6 @@ function papaki_ModifyNameserver($params)
     $jsonarray = array(
         "request" => array(
             "do" => 'modifyns',
-            "username" => $username,
-            "password" => $password,
             "apiKey" => $apikey,
             "domainname" => $sld . "." . $tld,
             "ns" => $nameserver,
@@ -1307,6 +1325,9 @@ function papaki_TransferSync($params)
     return $values; # return the details of the sync
 
 }
+
+
+
 
 function startsWith($haystack, $needle)
 {
