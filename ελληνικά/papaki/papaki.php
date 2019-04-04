@@ -393,6 +393,10 @@ function papaki_registerdomain($params)
     }
 
     $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
+    if (!(startswith($params["fullphonenumber"], "+")) and !(startswith($params["fullphonenumber"], "00"))) {
+        $params["fullphonenumber"] = '+30.' . $params["fullphonenumber"];
+    }
+
     if (isgrdomain($sld . "." . $tld)) {
         if (trim($params["companyname"]) == "") {
             $params["companyname"] = $params["fullname"];
@@ -478,6 +482,9 @@ function papaki_TransferDomain($params)
 
 
     $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
+    if (!(startswith($params["fullphonenumber"], "+")) and !(startswith($params["fullphonenumber"], "00"))) {
+        $params["fullphonenumber"] = '+30.' . $params["fullphonenumber"];
+    }
     if (isgrdomain($sld . "." . $tld)) {
         if (trim($params["companyname"]) == "") {
             $params["companyname"] = $params["fullname"];

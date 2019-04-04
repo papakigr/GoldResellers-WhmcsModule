@@ -58,7 +58,7 @@ Lang Overrides
 -----
 .. code-block:: bash
 
-	Extra langstrings are included at the folder overrides/. Please upload the folder  overrides/ into the /lang/ into
+	Extra langstrings are included at the folder overrides/. Please upload the folder  overrides/ into
 	the lang/ folder on your whmcs installation.
 
 
