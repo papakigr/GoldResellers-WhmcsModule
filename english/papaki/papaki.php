@@ -659,7 +659,8 @@ function papaki_GetContactDetails($params)
 	$firstname = $responsearray->response->registrantFirstName;
 	$LastName = $responsearray->response->registrantLastname;
     $OrganizationName = $responsearray->response->registrantorg;
-	$JobTitle = $responsearray->response->registrantjob;
+    $CompanyTitle = $responsearray->response->registrantCompanyTitle;
+    $fullname = $responsearray->response->registrantFullname;
 	$EmailAddress = $responsearray->response->registrantemail;
 	$Address1 = $responsearray->response->registrantaddress1;
 	$Address2 = $responsearray->response->registrantaddress2;
@@ -673,7 +674,7 @@ function papaki_GetContactDetails($params)
 	$Adminfirstname = $responsearray->response->adminFirstName;
 	$AdminLastName = $responsearray->response->adminLastname;
     $AdminOrganizationName = $responsearray->response->adminorg;
-	$AdminJobTitle = $responsearray->response->adminjob;
+
 	$AdminEmailAddress = $responsearray->response->adminemail;
 	$AdminAddress1 = $responsearray->response->adminaddress1;
 	$AdminAddress2 = $responsearray->response->adminaddress2;
@@ -688,7 +689,7 @@ function papaki_GetContactDetails($params)
 	$Techfirstname = $responsearray->response->techFirstName;
 	$TechLastName = $responsearray->response->techLastname;
     $TechOrganizationName = $responsearray->response->techorg;
-	$TechJobTitle = $responsearray->response->techjob;
+
 	$TechEmailAddress = $responsearray->response->techemail;
 	$TechAddress1 = $responsearray->response->techaddress1;
 	$TechAddress2 = $responsearray->response->techaddress2;
@@ -706,11 +707,17 @@ function papaki_GetContactDetails($params)
 	}
 
 	#####################################
-
+    if(!isgrdomain($sld . "." . $tld) and !iseudomain($sld . "." . $tld)) {
 	$values["Registrant"]['First Name'] = $firstname;
 	$values["Registrant"]['Last Name'] = $LastName;
+    }
+    if(iseudomain($sld . "." . $tld)){
+        $values["Registrant"]['Full Name'] = $fullname;
+    }
 	$values["Registrant"]['Organisation Name'] = $OrganizationName;
-	$values["Registrant"]['Job Title'] = $JobTitle;
+    if(isgrdomain($sld . "." . $tld)){
+        $values["Registrant"]['Company Title'] = $CompanyTitle;
+    }
 	$values["Registrant"]['Email'] = $EmailAddress;
 	$values["Registrant"]['Address 1'] = $Address1;
 	$values["Registrant"]['Address 2'] = $Address2;
@@ -721,11 +728,10 @@ function papaki_GetContactDetails($params)
 	$values["Registrant"]['Phone'] = $Phone;
 	$values["Registrant"]['Fax'] = $Fax;
 
-
+    if(!iseudomain($sld . "." . $tld)) {
 	$values["Admin"]['First Name'] = $Adminfirstname;
 	$values["Admin"]['Last Name'] = $AdminLastName;
 	$values["Admin"]['Organisation Name'] = $AdminOrganizationName;
-	$values["Admin"]['Job Title'] = $AdminJobTitle;
 	$values["Admin"]['Email'] = $AdminEmailAddress;
 	$values["Admin"]['Address 1'] = $AdminAddress1;
 	$values["Admin"]['Address 2'] = $AdminAddress2;
@@ -740,7 +746,6 @@ function papaki_GetContactDetails($params)
 	$values["Tech"]['First Name'] = $Techfirstname;
 	$values["Tech"]['Last Name'] = $TechLastName;
 	$values["Tech"]['Organisation Name'] = $TechOrganizationName;
-	$values["Tech"]['Job Title'] = $TechJobTitle;
 	$values["Tech"]['Email'] = $TechEmailAddress;
 	$values["Tech"]['Address 1'] = $TechAddress1;
 	$values["Tech"]['Address 2'] = $TechAddress2;
@@ -750,7 +755,7 @@ function papaki_GetContactDetails($params)
 	$values["Tech"]['Country'] = $TechCountry;
 	$values["Tech"]['Phone'] = $TechPhone;
 	$values["Tech"]['Fax'] = $TechFax;
-
+    }
 
 	return $values;
 }
