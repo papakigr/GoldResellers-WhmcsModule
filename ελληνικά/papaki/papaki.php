@@ -6,8 +6,8 @@
 
 set_time_limit(200);
 
-require('libs/ActiveLink/alink_include.php');
-import('org.active-link.xml.XMLDocument');
+
+
 
 require('libs/HttpClient.class.php');
 require_once('json.php');

@@ -100,18 +100,16 @@ function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $pas
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
     $data = curl_exec($ch);
-
     curl_close($ch);
 
-    $xmlDoc_final = new XMLDocument();
-    $xmlDoc_final->parseFromString($data);
-    $codeNode = $xmlDoc_final->xml->getTagContent('whmcsapi/result');//get_elements_by_tagname("code");
+
+    $xmlResponse = new SimpleXMLElement($data);
+    $codeNode=$xmlResponse->whmcsapi->result;
 
     if ($codeNode == "success") {
         return true;
     } else {
         return false;
-
     }
 
 }
