@@ -79,7 +79,8 @@ function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $pas
 
     $postfields["username"] = $username;
     $postfields["password"] = md5($password);
-    $postfields["action"] = "updateclientdomain"; #action performed by the [[API:Functions]]
+    $postfields["action"] = "updateclientdomain";
+    $postfields["responsetype"] = "json";
     $postfields["domainid"] = $domainid;
     if ($expitydate != "") {
         $postfields["expirydate"] = $expitydate;
@@ -90,9 +91,6 @@ function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $pas
     }
 
 
-    $postfields["responsetype"] = "xml";
-
-
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, 1);
@@ -100,11 +98,12 @@ function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $pas
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
     $data = curl_exec($ch);
+
+
     curl_close($ch);
 
-
-    $xmlResponse = new SimpleXMLElement($data);
-    $codeNode=$xmlResponse->whmcsapi->result;
+    $responseData = json_decode($data, true);
+    $codeNode = $responseData["result"];
 
     if ($codeNode == "success") {
         return true;
@@ -112,7 +111,9 @@ function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $pas
         return false;
     }
 
+
 }
+
 
 
 function encodetolatin_hook($mystring)
