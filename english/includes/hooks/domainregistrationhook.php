@@ -6,22 +6,17 @@ define("API_PASSWORD_HOOK", "mypassword");                                      
 define("APIKEY_HOOK", "myapikey");                                                    //place your papaki apikey
 define("POSTURL_HOOK", "https://api.papaki.com/register_url2.aspx");
 
+//This hook Syncs domains  expirationdate with papaki
+//runs automatically after domain registration and domain renewal
 
 function hook_domainregistrationhook_AfterRegistrarRegistration($vars)
 {
 
     if ($vars["params"]["registrar"] == "papaki") {
         //fill params
-
-
         $apikey_hook = APIKEY_HOOK;
         $posturl_hook = POSTURL_HOOK;
-
-
-        $testmode = "";
         $domain = encodetolatin_hook($vars["params"]["sld"] . "." . $vars["params"]["tld"]);
-
-
         $json = new Services_JSON();
         $jsonarray = array(
             "request" => array(
@@ -32,28 +27,19 @@ function hook_domainregistrationhook_AfterRegistrarRegistration($vars)
         );
         $Xpost = $json->encode($jsonarray);
         $Xpost = latintogreek3($Xpost);
-        //echo $Xpost;
-        $headers = array('Content-type: application/x-www-form-urlencoded');
 
         $pageContents = HttpClient::quickPost($posturl_hook, array(
             'message' => $Xpost
         ));
         $responsearray = $json->decode($pageContents);
         $codeNode = $responsearray->response->code;
-        $message = $responsearray->response->message;
-
 
         if ($codeNode == "1000") {
             $expirydate = $responsearray->response->expirationDate;
-
-
             if ($expirydate != "") {
-
-
                 fix_Expiration_hook($vars["params"]["domainid"], $expirydate);
             }
         }
-
 
     }
 
@@ -74,7 +60,6 @@ function fix_Expiration_hook($domainid, $expirydate)
 }
 
 
-
 function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $password, $status)
 {
 
@@ -92,7 +77,6 @@ function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $pas
         $postfields["status"] = $status;
     }
 
-
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, 1);
@@ -100,10 +84,7 @@ function fix_ExpirationDomain_hook($domainid, $expitydate, $url, $username, $pas
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
     $data = curl_exec($ch);
-
-
     curl_close($ch);
-
     $responseData = json_decode($data, true);
     $codeNode = $responseData["result"];
 
@@ -283,4 +264,4 @@ add_hook("AfterRegistrarRenewal", 1, "hook_domainregistrationhook_AfterRegistrar
 
 
 
- 
+
