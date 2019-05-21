@@ -58,11 +58,10 @@ Lang Overrides
     Extra langstrings are included at the folder overrides/. Please upload the folder  overrides/ into
     the lang/ folder on your whmcs installation.
 
-    Αν το αρχείο /lang/overrides/english.php  υπάρχει ήδη στον server θα πρέπει να προσθέσετε στο υπάρχον το περιεχόμενο του αρχείου
-    και όχι να το αντικαταστήσετε.
+    Αν το αρχείο /lang/overrides/english.php  υπάρχει ήδη στον server θα πρέπει να προσθέσετε
+    στο υπάρχον το περιεχόμενο του αρχείου και όχι να το αντικαταστήσετε.
 
-    Αν το αρχείο /lang/overrides/greek.php  υπάρχει ήδη στον    server θα πρέπει να προσθέσετε στο υπάρχον το περιεχόμενο του αρχείου
-    και όχι να το    αντικαταστήσετε.
+    Αν το αρχείο /lang/overrides/greek.php  υπάρχει ήδη στον server θα πρέπει να προσθέσετε
 
 
 HOOKS and SYNCHRONIZATION require whmcs version greater than 5.1.3 and php greater than 3 
