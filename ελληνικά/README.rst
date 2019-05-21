@@ -47,12 +47,16 @@ Domain Additional Fields
 -----
 .. code-block:: bash
 
-	Ο διακριτικός τίτλος εταιρείας είναι ένα extra πεδίο για τις κατοχυρώσεις του μητρώου των
-    ελληνικών ονομάτων χώρου. Για να μπορεί να γίνει συμπλήρωση αυτού του extra πεδίου θα πρέπει να βάλετε
-    στον φάκελο /resources/domains/ το αρχείο /resources/domains/additionalfields.php .
+    Για να μπορεί να γίνει συμπλήρωση των επιπλέον πεδίων που χρειάζονται για την κατοχύρωση ονομάτων χώρου
+    θα πρέπει στο αρχείο /resources/domains/additionalfields.php στο τέλος του, να ποροσθέσετε την παρακάτω γραμμή αν δεν υπάρχει
 
-    Αν το αρχείο /resources/domains/additionalfields.php υπάρχει ήδη στον server θα πρέπει
-    να προσθέσετε στο υπάρχον το περιεχόμενο του αρχείου  και όχι να το αντικαταστήσετε.
+    include(ROOTDIR."/modules/registrars/papaki/additionaldomainfields.inc.php");
+
+    Αν το αρχείο /resources/domains/additionalfields.php δεν υπάρχει θα πρέπει να το δημιουργήσετε.
+
+    Extra domain Fields
+    - Ο διακριτικός τίτλος εταιρείας είναι ένα extra πεδίο για τις κατοχυρώσεις του μητρώου των
+    ελληνικών ονομάτων χώρου.
 
 Lang Overrides
 -----

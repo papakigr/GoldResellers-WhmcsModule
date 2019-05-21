@@ -38,8 +38,16 @@ Domain Additional Fields
 -----
 .. code-block:: bash
 
-	Company title is an additional domain field for GR registry.Please upload the file
-	/resources/domains/additionalfields.php . Αν το αρχείο /resources/domains/additionalfields.php υπάρχει ήδη στον server θα πρέπει να προσθέσετε στο        υπάρχον το περιεχόμενο του αρχείου.
+    Για να μπορεί να γίνει συμπλήρωση των επιπλέον πεδίων που χρειάζονται για την κατοχύρωση ονομάτων χώρου
+    θα πρέπει στο αρχείο /resources/domains/additionalfields.php στο τέλος του, να ποροσθέσετε την παρακάτω γραμμή αν δεν υπάρχει
+
+    include(ROOTDIR."/modules/registrars/papaki/additionaldomainfields.inc.php");
+
+    Αν το αρχείο /resources/domains/additionalfields.php δεν υπάρχει θα πρέπει να το δημιουργήσετε.
+
+    Extra domain Fields
+    - Ο διακριτικός τίτλος εταιρείας είναι ένα extra πεδίο για τις κατοχυρώσεις του μητρώου των
+    ελληνικών ονομάτων χώρου.	/resources/domains/additionalfields.php . Αν το αρχείο /resources/domains/additionalfields.php υπάρχει ήδη στον server θα πρέπει να προσθέσετε στο        υπάρχον το περιεχόμενο του αρχείου.
 
 Lang Overrides
 -----
