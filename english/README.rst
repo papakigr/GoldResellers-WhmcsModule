@@ -11,26 +11,27 @@ Installation
 
 .. code-block:: bash
 
-	Upload the folder modules/registrars/papaki in the folder modules/registrars on your server.
+    Upload the folder modules/registrars/papaki in the folder modules/registrars on your server.
 	
-	Login in Whmcs Admin Panel and follow the steps below:
+    Login in Whmcs Admin Panel and follow the steps below:
 
-	1) Go to configuration->general settings -> localization, at system charset select utf-8.
-	2) Go to configuration-> domain registrars->registrar settings select papaki and then fill
-	your apikey from Papaki.gr.
-	3) Go to configuration->domain pricing, add all the extensions you want. Select Papaki
-	as Registrar.
-	4) Go to configuration->Payment Gateways and Select Payment Ways.
-	5) Make any other changes from configuration.
-	6) Check EPP Code checkbox.
+    1) Go to configuration->general settings -> localization, at system charset select utf-8.
+    2) Go to configuration-> domain registrars->registrar settings select papaki and then fill
+    your apikey from Papaki.gr.
+    3) Go to configuration->domain pricing, add all the extensions you want. Select Papaki
+    as Registrar.
+    4) Go to configuration->Payment Gateways and Select Payment Ways.
+    5) Make any other changes from configuration.
+    6) Check EPP Code checkbox.
 	
 	
-	For Domain Name Search:
+    For Domain Name Search:
     1) Open the file whois.json which is in the folder "resources/domains/"
     2) Open the file whois/whois.php and put your apikey.
     3) Go to the folder whmcs at your server and upload the folder whois
     4) At the file whois.json replace the word "mysite" with your site url to whois/whois.php
-    5) Αν το αρχείο /resources/domains/whois.json υπάρχει ήδη θα πρέπει να προσθέσετε το περιεχόμενο αλλιώς σνεβάστε το  αρχείο whois.json στον server, στο      μονοπάτι /resources/domains/
+    5) Αν το αρχείο /resources/domains/whois.json υπάρχει ήδη θα πρέπει να προσθέσετε το περιεχόμενο
+     αλλιώς σνεβάστε το  αρχείο whois.json στον server, στο      μονοπάτι /resources/domains/
     (See here  http://docs.whmcs.com/WHOIS_Servers )
 
 
@@ -39,7 +40,8 @@ Domain Additional Fields
 .. code-block:: bash
 
     Για να μπορεί να γίνει συμπλήρωση των επιπλέον πεδίων που χρειάζονται για την κατοχύρωση ονομάτων χώρου
-    θα πρέπει στο αρχείο /resources/domains/additionalfields.php στο τέλος του, να ποροσθέσετε την παρακάτω γραμμή αν δεν υπάρχει
+    θα πρέπει στο αρχείο /resources/domains/additionalfields.php στο τέλος του, να ποροσθέσετε την παρακάτω
+    γραμμή αν δεν υπάρχει
 
     include(ROOTDIR."/modules/registrars/papaki/additionaldomainfields.inc.php");
 
@@ -47,14 +49,14 @@ Domain Additional Fields
 
     Extra domain Fields
     - Ο διακριτικός τίτλος εταιρείας είναι ένα extra πεδίο για τις κατοχυρώσεις του μητρώου των
-    ελληνικών ονομάτων χώρου.	/resources/domains/additionalfields.php . Αν το αρχείο /resources/domains/additionalfields.php υπάρχει ήδη στον server θα πρέπει να προσθέσετε στο        υπάρχον το περιεχόμενο του αρχείου.
+    ελληνικών ονομάτων χώρου.
 
 Lang Overrides
 -----
 .. code-block:: bash
 
-	Extra langstrings are included at the folder overrides/. Please upload the folder  overrides/ into
-	the lang/ folder on your whmcs installation.
+    Extra langstrings are included at the folder overrides/. Please upload the folder  overrides/ into
+    the lang/ folder on your whmcs installation.
 
     Αν το αρχείο /lang/overrides/english.php  υπάρχει ήδη στον server θα πρέπει να προσθέσετε στο υπάρχον το περιεχόμενο του αρχείου
     και όχι να το αντικαταστήσετε.
