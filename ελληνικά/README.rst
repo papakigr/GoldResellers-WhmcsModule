@@ -13,24 +13,24 @@ To module μπορεί να χρησιμοποιηθεί μόνο από whmcs V
 
 .. code-block:: bash
 
-	Ανεβάστε τον φάκελο modules/registrars/papaki μέσα στον αντίστοιχο φάκελο modules/registrars στον server σας
+    Ανεβάστε τον φάκελο modules/registrars/papaki μέσα στον αντίστοιχο φάκελο modules/registrars στον server σας
 
-	Στη συνέχεια μπείτε στο admin του whmcs και:
+    Στη συνέχεια μπείτε στο admin του whmcs και:
 
-	1) Από το configuration->general settings -> localization στο system charset πεδίο valte utf-8.
-	2) Από το configuration-> domain registrars->registrar settings επιλέξτε το papaki και 
-	στη συνέχεια συμπληρώστε τo apiKey που έχετε στο Papaki.gr.
-	3) Από το configuration->domain pricing προσθέστε όλα τα extensions που θέλετε να έχετε, 
-	καθώς και τις τιμές τις οποίες θα τα χρεώνετε. Στο Automatic Registration βάλτε Papaki 
-	για τα extensions τα οποία θέλετε να κατοχυρώνονται από το Papaki.gr.
-	4) Από το configuration->Payment Gateways δώστε τους τρόπους που θέλετε να γίνονται 
-	οι πληρωμές από το site σας.
-	5) Κάντε ότι επιπλέον αλλαγές θέλετε για το site σας μέσα από το configuration.
-	6) Για να μπορείτε να έχετε επιτυχή μεταφορά ονομάτων χώρου σε εσάς θα πρέπει στο 
-	configuration->domain pricing να έχετε κάνει check για όλα τα extensions το κουτάκι EPP Code.
+    1) Από το configuration->general settings -> localization στο system charset πεδίο valte utf-8.
+    2) Από το configuration-> domain registrars->registrar settings επιλέξτε το papaki και
+    στη συνέχεια συμπληρώστε τo apiKey που έχετε στο Papaki.gr.
+    3) Από το configuration->domain pricing προσθέστε όλα τα extensions που θέλετε να έχετε,
+    καθώς και τις τιμές τις οποίες θα τα χρεώνετε. Στο Automatic Registration βάλτε Papaki
+    για τα extensions τα οποία θέλετε να κατοχυρώνονται από το Papaki.gr.
+    4) Από το configuration->Payment Gateways δώστε τους τρόπους που θέλετε να γίνονται
+    οι πληρωμές από το site σας.
+    5) Κάντε ότι επιπλέον αλλαγές θέλετε για το site σας μέσα από το configuration.
+    6) Για να μπορείτε να έχετε επιτυχή μεταφορά ονομάτων χώρου σε εσάς θα πρέπει στο
+    configuration->domain pricing να έχετε κάνει check για όλα τα extensions το κουτάκι EPP Code.
 	
 	
-	Για να δουλεύει σωστά η αναζήτηση ονομάτων χώρου θα πρέπει να κάνετε τις εξής αλλαγές:
+    Για να δουλεύει σωστά η αναζήτηση ονομάτων χώρου θα πρέπει να κάνετε τις εξής αλλαγές:
     1) Ανοίξτε το αρχείο whois.json που βρίσκεται στον φάκελο resources/domains/ στα αρχεία
     που έχετε κατεβάσει
     2) Ανοίξτε το αρχείο whois/whois.php και βάλτε το apikey που έχετε στο papaki.
