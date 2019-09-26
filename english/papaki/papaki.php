@@ -395,9 +395,10 @@ function papaki_registerdomain($params)
 		$idprotection = "false";
 	}
 
-    $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
-    if (!(startswith($params["fullphonenumber"], "+")) and !(startswith($params["fullphonenumber"], "00"))) {
-        $params["fullphonenumber"] = '+30.' . $params["fullphonenumber"];
+    $phonenumber = $params["phonenumber"];
+    $phonenumber = strtr($phonenumber, array(" " => ""));
+    if (!(startswith($phonenumber, "+")) and !(startswith($phonenumber, "00"))) {
+        $phonenumber = "+" . $params['phonecc'] .".". $phonenumber;
     }
 
     if (isgrdomain($sld . "." . $tld)) {
@@ -431,7 +432,7 @@ function papaki_registerdomain($params)
 			"owner_city" => encodetolatin($params["city"]),
 			"owner_postcode" => encodetolatin($params["postcode"]),
             "owner_country" => encodetolatin($params["countrycode"]),
-            "owner_phone" => encodetolatin($params["fullphonenumber"]),
+            "owner_phone" => encodetolatin($phonenumber),
             "owner_fax" => '',
 			"owner_litepsd" => ' ',
             "owner_CompanyTitle" => $CompanyTitle,
@@ -483,10 +484,10 @@ function papaki_TransferDomain($params)
     $transfersecret = encodetolatin($params["eppcode"]);
 
 
-
-    $params["fullphonenumber"]=strtr($params["fullphonenumber"],array(" " => ""));
-    if (!(startswith($params["fullphonenumber"], "+")) and !(startswith($params["fullphonenumber"], "00"))) {
-        $params["fullphonenumber"] = '+30.' . $params["fullphonenumber"];
+    $phonenumber = $params["phonenumber"];
+    $phonenumber = strtr($phonenumber, array(" " => ""));
+    if (!(startswith($phonenumber, "+")) and !(startswith($phonenumber, "00"))) {
+        $phonenumber = "+" . $params['phonecc'] .".". $phonenumber;
     }
     if (isgrdomain($sld . "." . $tld)) {
         if (trim($params["companyname"]) == "") {
@@ -505,7 +506,7 @@ function papaki_TransferDomain($params)
 	$RegistrantPostalCode = encodetolatin($params["postcode"]);
     $RegistrantCountry = encodetolatin($params["countrycode"]);
 	$RegistrantEmailAddress = encodetolatin($params["email"]);
-    $RegistrantPhone = encodetolatin($params["fullphonenumber"]);
+    $RegistrantPhone = encodetolatin($phonenumber);
 
 
 	$json = new Services_JSON();
@@ -742,7 +743,6 @@ function papaki_GetContactDetails($params)
 	$values["Admin"]['Phone'] = $AdminPhone;
 	$values["Admin"]['Fax'] = $AdminFax;
 
-
 	$values["Tech"]['First Name'] = $Techfirstname;
 	$values["Tech"]['Last Name'] = $TechLastName;
 	$values["Tech"]['Organisation Name'] = $TechOrganizationName;
@@ -782,6 +782,10 @@ function papaki_SaveContactDetails($params)
     $PostalCode = encodetolatin($params['contactdetails']["Registrant"]['Postcode']);
     $Country = encodetolatin($params['contactdetails']["Registrant"]['Country']);
     $Phone = encodetolatin($params["contactdetails"]["Registrant"]['Phone']);
+    if ($params["contactdetails"]["Registrant"]['Phone Country Code'] and !(startswith($params['contactdetails']["Registrant"]['Phone'],
+            "+")) and !(startswith($params['contactdetails']["Registrant"]['Phone'], "00"))) {
+        $Phone = '+' . $params["contactdetails"]["Registrant"]['Phone Country Code'] . "." . $Phone;
+    }
     $Fax = encodetolatin($params['contactdetails']["Registrant"]['Fax']);
     if ($Fax == "+30.2" or $Fax == "+30.") {
 		$Fax = "";
@@ -805,6 +809,10 @@ function papaki_SaveContactDetails($params)
     $AdminPostalCode = encodetolatin($params['contactdetails']["Admin"]['Postcode']);
     $AdminCountry = encodetolatin($params['contactdetails']["Admin"]['Country']);
     $AdminPhone = encodetolatin($params['contactdetails']["Admin"]['Phone']);
+    if ($params["contactdetails"]["Admin"]['Phone Country Code'] and !(startswith($params['contactdetails']["Admin"]['Phone'],
+            "+")) and !(startswith($params['contactdetails']["Admin"]['Phone'], "00"))) {
+        $AdminPhone = '+' . $params["contactdetails"]["Admin"]['Phone Country Code'] . "." . $AdminPhone;
+    }
     $AdminFax = encodetolatin($params['contactdetails']["Admin"]['Fax']);
     if ($AdminFax == "+30.2" or $AdminFax == "+30.") {
 		$AdminFax = "";
@@ -827,6 +835,11 @@ function papaki_SaveContactDetails($params)
     $TechPostalCode = encodetolatin($params['contactdetails']["Tech"]['Postcode']);
     $TechCountry = encodetolatin($params['contactdetails']["Tech"]['Country']);
     $TechPhone = encodetolatin($params['contactdetails']["Tech"]['Phone']);
+    if ($params["contactdetails"]["Tech"]['Phone Country Code'] and !(startswith($params['contactdetails']["Tech"]['Phone'],
+            "+")) and !(startswith($params['contactdetails']["Tech"]['Phone'], "00"))) {
+
+        $TechPhone = '+' . $params["contactdetails"]["Tech"]['Phone Country Code'] . "." . $TechPhone;
+    }
     $TechFax = encodetolatin($params['contactdetails']["Tech"]['Fax']);
     if ($TechFax == "+30.2" or $TechFax == "+30.") {
 		$TechFax = "";
