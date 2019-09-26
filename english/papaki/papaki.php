@@ -398,7 +398,7 @@ function papaki_registerdomain($params)
     $phonenumber = $params["phonenumber"];
     $phonenumber = strtr($phonenumber, array(" " => ""));
     if (!(startswith($phonenumber, "+")) and !(startswith($phonenumber, "00"))) {
-        $phonenumber = "+" . $params['phonecc'] . $phonenumber;
+        $phonenumber = "+" . $params['phonecc'] .".". $phonenumber;
     }
 
     if (isgrdomain($sld . "." . $tld)) {
@@ -487,7 +487,7 @@ function papaki_TransferDomain($params)
     $phonenumber = $params["phonenumber"];
     $phonenumber = strtr($phonenumber, array(" " => ""));
     if (!(startswith($phonenumber, "+")) and !(startswith($phonenumber, "00"))) {
-        $phonenumber = "+" . $params['phonecc'] . $phonenumber;
+        $phonenumber = "+" . $params['phonecc'] .".". $phonenumber;
     }
     if (isgrdomain($sld . "." . $tld)) {
         if (trim($params["companyname"]) == "") {
@@ -742,7 +742,6 @@ function papaki_GetContactDetails($params)
 	$values["Admin"]['Country'] = $AdminCountry;
 	$values["Admin"]['Phone'] = $AdminPhone;
 	$values["Admin"]['Fax'] = $AdminFax;
-
 
 	$values["Tech"]['First Name'] = $Techfirstname;
 	$values["Tech"]['Last Name'] = $TechLastName;
