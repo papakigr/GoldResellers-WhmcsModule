@@ -14,24 +14,17 @@ $additionaldomainfields[".edu.gr"][] = array("Name" => "Company Title" ,"LangVar
 $additionaldomainfields[".gov.gr"][] = array("Name" => "Company Title" ,"LangVar"=>"grcompanytitle", "Type" => "text", "Size" => "60", "Default" => "", "Required" => false, "Description" => $_LANG['grcompanytitledescription'] );
 
 
-$additionaldomainfields[".eu"][] = array(
-    "Name" => "Natural Person",
-    "LangVar" => "eunaturalperson",
-    "Type" => "text",
-    "Size" => "60",
-    "Default" => "",
-    "Required" => true,
-    "Description" => $_LANG['eunaturalpersondescription']
-);
 
 $additionaldomainfields[".eu"][] = array(
     "Name" => "Citizenship",
     "LangVar" => "eucitizenship",
-    "Type" => "text",
+    "Type" => "dropdown",
     "Size" => "60",
     "Default" => "",
+    "Options" => ",AT|Austria,BE|Belgium,BG|Bulgaria,CY|Cyprus,CZ|Czechia,DE|Germany,DK|Denmark,EE|Estonia,ES|Spain,FI|Finland,FR|France,GB|Great Britain,GR|Greece,HR|Croatia,HU|Hungary,IE|Ireland,IT|Italy,LT|Lithuania,LU|Luxembourg,LV|Latvia,MT|Malta,NL|Netherlands,PL|Poland,PT|Portugal,RO|Romania,SE|Sweden,SI|Slovenia,SK|Slovakia",
     "Required" => false,
     "Description" => $_LANG['eucitizenshipdescription']
 );
+
 
 

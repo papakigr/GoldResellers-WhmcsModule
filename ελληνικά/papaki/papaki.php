@@ -383,8 +383,14 @@ function papaki_registerdomain($params)
 
 
     $CompanyTitle = encodetolatin($description_ar["Company Title"]);
-    $naturalPerson = encodetolatin($description_ar["Natural Person"]);
+    $naturalPerson="True";
+    if(trim($params["companyname"])!=""){
+        $naturalPerson="False";
+    }
     $citizenship = encodetolatin($description_ar["Citizenship"]);
+    if($naturalPerson=="False"){
+        $citizenship="";
+    }
 
     //end extra attributes
 
@@ -439,8 +445,6 @@ function papaki_registerdomain($params)
             "owner_fax" => '',
             "owner_litepsd" => ' ',
             "owner_CompanyTitle" => $CompanyTitle,
-            "owner_naturalPerson" => $naturalPerson,
-            "owner_citizenship" => $citizenship,
             "regperiod" => $params["regperiod"],
             "idprotect" => $idprotection,
             "customer_language" => "gr",
@@ -451,6 +455,14 @@ function papaki_registerdomain($params)
             )
         )
     );
+
+    if (iseudomain( $sld . "." . $tld) ){
+        $jsonarray["request"]["owner_naturalPerson"] =$naturalPerson;
+        $jsonarray["request"]["owner_citizenship"] =$citizenship;
+
+    }
+
+
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
 
@@ -513,9 +525,14 @@ function papaki_TransferDomain($params)
     $RegistrantEmailAddress = encodetolatin($params["email"]);
     $RegistrantPhone = encodetolatin($phonenumber);
 
-    $naturalPerson = encodetolatin($extraAttr["Natural Person"]);
+    $naturalPerson="True";
+    if(trim($RegistrantCompanyName)!=""){
+        $naturalPerson="False";
+    }
     $citizenship = encodetolatin($extraAttr["Citizenship"]);
-
+    if($naturalPerson=="False"){
+        $citizenship="";
+    }
 
     $json = new Services_JSON();
 
@@ -540,13 +557,17 @@ function papaki_TransferDomain($params)
                     "country" => $RegistrantCountry,
                     "phone" => $RegistrantPhone,
                     "fax" => "",
-                    "naturalPerson" => $naturalPerson,
-                    "citizenship" => $citizenship,
                     "title" => ""
 
                 )
             )
         );
+
+        if (iseudomain( $sld . "." . $tld) ){
+            $jsonarray["request"]["RegistrantContact"]["naturalPerson"] =$naturalPerson;
+            $jsonarray["request"]["RegistrantContact"]["citizenship"] =$citizenship;
+
+        }
     } else {
         $jsonarray = array(
             "request" => array(
@@ -683,7 +704,7 @@ function papaki_GetContactDetails($params)
     $Country = $responsearray->response->registrantcountry;
     $Phone = $responsearray->response->registrantphone;
     $Fax = $responsearray->response->registrantfax;
-    $naturalPerson = $responsearray->response->registrantNaturalPerson;
+ //   $naturalPerson = $responsearray->response->registrantNaturalPerson;
     $citizenship = $responsearray->response->registrantCitizenship;
 
     $Adminfirstname = $responsearray->response->adminFirstName;
@@ -744,7 +765,7 @@ function papaki_GetContactDetails($params)
     $values["Registrant"]['Fax'] = $Fax;
 
     if(iseudomain($sld . "." . $tld)){
-        $values["Registrant"]['naturalPerson'] = $naturalPerson;
+    //    $values["Registrant"]['naturalPerson'] = $naturalPerson;
         $values["Registrant"]['citizenship'] = $citizenship;
 
     }
@@ -806,8 +827,13 @@ function papaki_SaveContactDetails($params)
     $PostalCode = encodetolatin($params['contactdetails']["Registrant"]['Postcode']);
     $Country = encodetolatin($params['contactdetails']["Registrant"]['Country']);
     $Phone = encodetolatin($params["contactdetails"]["Registrant"]['Phone']);
-    $naturalPerson = encodetolatin($params["contactdetails"]["Registrant"]["naturalPerson"]);
+
+    $naturalPerson="True";
+    if(trim($companyName)!=""){
+        $naturalPerson="False";
+    }
     $citizenship = encodetolatin($params["contactdetails"]["Registrant"]["citizenship"]);
+
 
     if ($params["contactdetails"]["Registrant"]['Phone Country Code'] and !(startswith($params['contactdetails']["Registrant"]['Phone'],
             "+")) and !(startswith($params['contactdetails']["Registrant"]['Phone'], "00"))) {
@@ -1030,8 +1056,6 @@ function papaki_SaveContactDetails($params)
             "country" => $Country,
             "phone" => $Phone,
             "fax" => $Fax,
-            "naturalPerson" => $naturalPerson,
-            "citizenship" => $citizenship,
             "adminfirstname" => $adminfirstname,
             "adminlastname" => $adminlastname,
             "adminfullname" => $adminfullname,
@@ -1060,6 +1084,12 @@ function papaki_SaveContactDetails($params)
             "techfax" => $TechFax
         )
     );
+
+    if (iseudomain( $sld . "." . $tld) ){
+        $jsonarray["request"]["naturalPerson"] =$naturalPerson;
+        $jsonarray["request"]["citizenship"] =$citizenship;
+
+    }
 
     $Xpost = $json->encode($jsonarray);
     $Xpost = latintogreek($Xpost);
