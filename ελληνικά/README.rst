@@ -59,12 +59,11 @@ Papaki Module Whmcs
 Domain Additional Fields
 -----
 .. code-block:: bash
+
     Για να μπορεί να γίνει συμπλήρωση των extra πεδίων θα πρέπει να βάλετε
     στον φάκελο /resources/domains/ το αρχείο /resources/domains/additionalfields.php .
-
-	- Ο διακριτικός τίτλος εταιρείας είναι ένα extra πεδίο για τις κατοχυρώσεις του μητρώου των
+    - Ο διακριτικός τίτλος εταιρείας είναι ένα extra πεδίο για τις κατοχυρώσεις του μητρώου των
     ελληνικών ονομάτων χώρου.
-
     - Η Ιθαγένεια του ιδιοκτήτη είναι σε κάποιες περιπτωσεις υποχρεωτική για τα Eu domains.
     Περισσότερες πληροφορίες εδώ: https://eurid.eu/en/register-a-eu-domain/brexit-notice/
 
