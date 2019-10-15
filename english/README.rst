@@ -51,8 +51,10 @@ Domain Additional Fields
 -----
 .. code-block:: bash
 
-	Company title is an additional domain field for GR registry.Please upload the file
-	/resources/domains/additionalfields.php .
+    Please upload the file	/resources/domains/additionalfields.php .
+    - Company title is an additional domain field for GR registry
+    - Citizenship   is an additional domain field for Eu registry
+
 
 Lang Overrides
 -----
