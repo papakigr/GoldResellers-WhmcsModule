@@ -383,10 +383,23 @@ function papaki_registerdomain($params)
 
 
     $CompanyTitle = encodetolatin($description_ar["Company Title"]);
+    $entityType = encodetolatin($description_ar["Entity Type"]);
+
+    //NATURAL PERSON
+    if($entityType=="INDIVIDUAL") {
+        $naturalPerson="True";
+        $params["companyname"]="";
+    }
+    elseif($entityType=="COMPANY"){
+        $naturalPerson="False";
+    }else{
     $naturalPerson="True";
     if(trim($params["companyname"])!=""){
         $naturalPerson="False";
     }
+    }
+
+    //CITIZENSHIP
     $citizenship = encodetolatin($description_ar["Citizenship"]);
     if($naturalPerson=="False"){
         $citizenship="";
@@ -525,10 +538,23 @@ function papaki_TransferDomain($params)
 	$RegistrantEmailAddress = encodetolatin($params["email"]);
     $RegistrantPhone = encodetolatin($phonenumber);
 
+    $entityType = encodetolatin($extraAttr["Entity Type"]);
+
+    //NATURAL PERSON
+    if($entityType=="INDIVIDUAL") {
+        $naturalPerson="True";
+        $params["companyname"]="";
+        $RegistrantCompanyName="";
+    }
+    elseif($entityType=="COMPANY"){
+        $naturalPerson="False";
+    }else{
     $naturalPerson="True";
-    if(trim($RegistrantCompanyName)!=""){
+        if(trim($params["companyname"])!=""){
         $naturalPerson="False";
     }
+    }
+
     $citizenship = encodetolatin($extraAttr["Citizenship"]);
     if($naturalPerson=="False"){
         $citizenship="";
