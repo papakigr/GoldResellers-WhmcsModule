@@ -1,7 +1,7 @@
 <?php
 /*
- * Version 4.2.5
- * 04/04/2019
+ * Version 4.2.6
+ * 16/10/2019
  */
 
 set_time_limit(200);
