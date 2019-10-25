@@ -383,10 +383,24 @@ function papaki_registerdomain($params)
 
 
     $CompanyTitle = encodetolatin($description_ar["Company Title"]);
-    $naturalPerson="True";
-    if(trim($params["companyname"])!=""){
-        $naturalPerson="False";
+    $entityType = encodetolatin($description_ar["Entity Type"]);
+
+    //NATURAL PERSON
+    $naturalPerson="";
+    if($entityType=="INDIVIDUAL") {
+        $naturalPerson="True";
+        $params["companyname"]="";
     }
+    elseif($entityType=="COMPANY"){
+        $naturalPerson="False";
+    }else{
+        if(trim($params["companyname"])!=""){
+            $naturalPerson="False";
+        }
+    }
+
+
+    //CITIZENSHIP
     $citizenship = encodetolatin($description_ar["Citizenship"]);
     if($naturalPerson=="False"){
         $citizenship="";
