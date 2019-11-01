@@ -26,5 +26,16 @@ $additionaldomainfields[".eu"][] = array(
     "Description" => $_LANG['eucitizenshipdescription']
 );
 
+//replace existing Entity Type
+$additionaldomainfields['.eu'][] = [
+    'Name' => 'Entity Type',
+    'LangVar' => 'euTldEntityType',
+    'Type' => 'dropdown',
+    'Default' => 'INDIVIDUAL|Individual',
+    'Options' =>
+        'COMPANY|Company,INDIVIDUAL|Individual',
 
+    'Description' => 'EURid Geographical Restrictions. In order to register a .EU domain '
+        . 'name, you must meet certain eligibility requirements.',
+];
 
