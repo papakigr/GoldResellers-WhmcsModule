@@ -386,16 +386,15 @@ function papaki_registerdomain($params)
     $entityType = encodetolatin($description_ar["Entity Type"]);
 
     //NATURAL PERSON
-    if($entityType=="INDIVIDUAL") {
-        $naturalPerson="True";
-        $params["companyname"]="";
-    }
-    elseif($entityType=="COMPANY"){
-        $naturalPerson="False";
-    }else{
-        $naturalPerson="True";
-        if(trim($params["companyname"])!=""){
-            $naturalPerson="False";
+    if ($entityType == "INDIVIDUAL") {
+        $naturalPerson = "True";
+        $params["companyname"] = "";
+    } elseif ($entityType == "COMPANY") {
+        $naturalPerson = "False";
+    } else {
+        $naturalPerson = "True";
+        if (trim($params["companyname"]) != "") {
+            $naturalPerson = "False";
         }
     }
 
@@ -541,17 +540,16 @@ function papaki_TransferDomain($params)
     $entityType = encodetolatin($extraAttr["Entity Type"]);
 
     //NATURAL PERSON
-    if($entityType=="INDIVIDUAL") {
-        $naturalPerson="True";
-        $params["companyname"]="";
-        $RegistrantCompanyName="";
-    }
-    elseif($entityType=="COMPANY"){
-        $naturalPerson="False";
-    }else{
-        $naturalPerson="True";
-        if(trim($params["companyname"])!=""){
-            $naturalPerson="False";
+    if ($entityType == "INDIVIDUAL") {
+        $naturalPerson = "True";
+        $params["companyname"] = "";
+        $RegistrantCompanyName = "";
+    } elseif ($entityType == "COMPANY") {
+        $naturalPerson = "False";
+    } else {
+        $naturalPerson = "True";
+        if (trim($params["companyname"]) != "") {
+            $naturalPerson = "False";
         }
     }
 
