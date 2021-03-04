@@ -1328,7 +1328,9 @@ function papaki_Sync($params)
 # Put your code to check on the domain status here
 
 	$apikey = encodetolatin($params["APIkey"]);
-	$domain = encodetolatin($params["domain"]);
+    // domain parameters
+    $sld = encodetolatin($params['sld']);
+    $tld = encodetolatin($params['tld']);
 
 # Other parameters used in your _getConfigArray() function would also be available for use in this function
 
@@ -1336,7 +1338,7 @@ function papaki_Sync($params)
 
 
 	$json = new Services_JSON();
-	$jsonarray = array("request" => array("do" => 'getDomainInfo', "apiKey" => $apikey, "domainname" => $domain));
+	$jsonarray = array("request" => array("do" => 'getDomainInfo', "apiKey" => $apikey, "domainname" => $sld . '.' . $tld));
 	$Xpost = $json->encode($jsonarray);
 	$Xpost = latintogreek($Xpost);
 
@@ -1358,7 +1360,7 @@ function papaki_Sync($params)
 		}
 	} else {
 
-		$values['error'] = "Error at  Response from Papaki<br>Domain: " . $domain . "<br>Code: " . $codeNode . "<br>Message: " . $message . "<br><br>"; # error if the check fails - for example domain not found
+		$values['error'] = "Error at  Response from Papaki<br>Domain: " . $sld . '.' . $tld . "<br>Code: " . $codeNode . "<br>Message: " . $message . "<br><br>"; # error if the check fails - for example domain not found
 
 	}
 
@@ -1376,7 +1378,9 @@ function papaki_TransferSync($params)
 
 
 	$apikey = encodetolatin($params["APIkey"]);
-	$domain = encodetolatin($params["domain"]);
+    // domain parameters
+    $sld = encodetolatin($params['sld']);
+    $tld = encodetolatin($params['tld']);
 
 # Other parameters used in your _getConfigArray() function would also be available for use in this function
 
@@ -1384,7 +1388,7 @@ function papaki_TransferSync($params)
 
 
 	$json = new Services_JSON();
-	$jsonarray = array("request" => array("do" => 'getDomainInfo', "apiKey" => $apikey, "domainname" => $domain));
+	$jsonarray = array("request" => array("do" => 'getDomainInfo', "apiKey" => $apikey, "domainname" => $sld . '.' . $tld));
 	$Xpost = $json->encode($jsonarray);
 	$Xpost = latintogreek($Xpost);
 
@@ -1418,7 +1422,7 @@ function papaki_TransferSync($params)
 
 	# - or if errored
 	if ($codeNode != "1000") {
-		$values['error'] = "Error at  Response from Papaki<br>Domain: " . $domain . "<br>Code: " . $codeNode . "<br>Message: " . $message . "<br><br>"; # error if the check fails - for example domain not found
+		$values['error'] = "Error at  Response from Papaki<br>Domain: " . $sld . '.' . $tld . "<br>Code: " . $codeNode . "<br>Message: " . $message . "<br><br>"; # error if the check fails - for example domain not found
 	}
 
 

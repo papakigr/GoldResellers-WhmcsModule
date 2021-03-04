@@ -3,7 +3,7 @@ Papaki Module Whmcs
  
 General Info
 ------------
-Supports WHMCS V7.8.3
+Supports WHMCS V8.1
 
 Installation
 ------------
